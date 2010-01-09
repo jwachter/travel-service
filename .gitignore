@@ -5,4 +5,5 @@ Thumbs.db
 .manager/*
 .project
 .classpath
-.target/*
+target/*
+.settings/*
