@@ -6,4 +6,6 @@ Thumbs.db
 .project
 .classpath
 target/*
-.settings/*
+travel-service-dev/*
+*.log
+*.tmp
