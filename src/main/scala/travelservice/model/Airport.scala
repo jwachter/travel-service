@@ -30,6 +30,17 @@ class Airport extends LongKeyedMapper[Airport] with IdPK{
 	object country extends MappedString(this, 100)
 	object lat extends MappedDouble(this)
 	object long extends MappedDouble(this)
+ 
+	def asXml = <airport>
+	<code>{this.code.is}</code>
+    <name>{this.name.is}</name>
+    <location>
+    	<city>{this.city.is}</city>
+    	<country>{this.country.is}</country>
+        <latitude>{this.lat.is}</latitude>
+        <longitude>{this.long.is}</longitude>
+    </location>
+ </airport>
 }
 
 private[model] class MappedAirport[T <: Mapper[T]](mapper: T) extends MappedLongForeignKey(mapper, Airport)

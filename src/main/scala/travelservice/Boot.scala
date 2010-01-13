@@ -135,6 +135,8 @@ class Boot extends Bootable{
     val TIME_YUL_CDG = new DateTime(2010,1,1,20,0,0,0) // 6.75h
     val TIME_YUL_YYZ = new DateTime(2010,1,1,16,0,0,0) // 1.4h
     val TIME_YUL_YVR = new DateTime(2010,1,1,19,55,0,0) // 5.5h
+    
+    LiftRules.early append { _ setCharacterEncoding "UTF-8" }
 
     
     for(i <- (1 to 365)){
