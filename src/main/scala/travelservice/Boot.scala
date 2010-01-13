@@ -49,6 +49,8 @@ class Boot extends Bootable{
     // Prevent bugs while database schema is not stable, start from blank!
     // Onky uncomment when experiencing problems during development
     // Schemifier.destroyTables_!!(Log.infoF _, Airport, Flight)
+      
+    Schemifier.destroyTables_!!(Log.infoF _, Airport, Flight)
     
     Schemifier.schemify(true, Log.infoF _, Airport, Flight)
     

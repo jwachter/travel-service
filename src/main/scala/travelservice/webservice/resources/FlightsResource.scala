@@ -9,9 +9,9 @@ object FlightsResource extends RESTResource{
   
 	def supportedContentTypes = List("json","xml")
  
-	val handlers = Map(
+	/*val handlers = Map(
 		(GetRequest, (req:Req,contentType:String)=>Empty)
-	)
+	)*/
  
 	def initialize() {
 	  // Nothing special to initialize here
