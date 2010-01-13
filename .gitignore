@@ -9,3 +9,4 @@ target/*
 travel-service-dev/*
 *.log
 *.tmp
+.settings/*
