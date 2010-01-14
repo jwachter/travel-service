@@ -22,10 +22,18 @@ object Flight extends Flight with LongKeyedMetaMapper[Flight]
 class Flight extends LongKeyedMapper[Flight] with IdPK{
 	 def getSingleton = Flight
   
-	 object from extends MappedAirport(this)
-	 object to extends MappedAirport(this)
+	 object followingFlight extends MappedLongForeignKey(this, Flight)
+	 object origin extends MappedLongForeignKey(this, Airport)//MappedAirport(this)
+	 object destination extends MappedLongForeignKey(this, Airport)//MappedAirport(this)
 	 object time extends MappedDateTime(this)
 	 object length extends MappedDouble(this)
+  
+	 def toXML = <flight>
+	 <from>{origin.name}</from>
+	 <to>{destination.name}</to>
+	 <duration>{time}</duration>
+	 <length>{length}</length>
+  </flight>
 }
 
 private[model] class MappedFlight[T <: Mapper[T]](mapper: T) extends MappedLongForeignKey(mapper, Flight)
