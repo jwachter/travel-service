@@ -43,34 +43,34 @@ class Boot extends Bootable{
     
     // Prevent bugs while database schema is not stable, start from blank!
     // Onky uncomment when experiencing problems during development
-    // Schemifier.destroyTables_!!(Log.infoF _, Airport, Flight)
+    // Schemifier.destroyTables_!!(Log.infoF _, DBAirport, Flight)
       
-    Schemifier.destroyTables_!!(Log.infoF _, Airport, Flight)
+    Schemifier.destroyTables_!!(Log.infoF _, Airport)
     
-    Schemifier.schemify(true, Log.infoF _, Airport, Flight)
+    Schemifier.schemify(true, Log.infoF _, Airport)
     
     initialize()
   }
   
   def initialize() {
-    // Setup some airports    
-    val FRA = Airport.create.airportCode("FRA").name("Frankfurt International Airport").city("Frankfurt").country("Germany").lat(50.026422).long(8.543125)
+    /*// Setup some airports    
+    val FRA = DBAirport.create.airportCode("FRA").name("Frankfurt International DBAirport").city("Frankfurt").country("Germany").lat(50.026422).long(8.543125)
     FRA.save
-    val TXL = Airport.create.airportCode("TXL").name("Tegel International Airport").city("Berlin").country("Germany").lat(52.559686).long(13.287711)
+    val TXL = DBAirport.create.airportCode("TXL").name("Tegel International DBAirport").city("Berlin").country("Germany").lat(52.559686).long(13.287711)
     TXL.save
-    val CDG = Airport.create.airportCode("CDG").name("Charles de Gaulle International Airport").city("Paris").country("France").lat(49.012778).long(2.55)
+    val CDG = DBAirport.create.airportCode("CDG").name("Charles de Gaulle International DBAirport").city("Paris").country("France").lat(49.012778).long(2.55)
     CDG.save
-    val ZRH = Airport.create.airportCode("ZRH").name("Zurich International Airport").city("Zurich").country("Switzerland").lat(47.464722).long(8.549167)
+    val ZRH = DBAirport.create.airportCode("ZRH").name("Zurich International DBAirport").city("Zurich").country("Switzerland").lat(47.464722).long(8.549167)
     ZRH.save
-    val YYZ = Airport.create.airportCode("YYZ").name("Toronto Pearson International Airport").city("Missisauga, Toronto").country("Canada").lat(43.677222).long(-79.630556)
+    val YYZ = DBAirport.create.airportCode("YYZ").name("Toronto Pearson International DBAirport").city("Missisauga, Toronto").country("Canada").lat(43.677222).long(-79.630556)
     YYZ.save
-    val YVR = Airport.create.airportCode("YVR").name("Vancouver International Airport").city("Richmond, Vancouver").country("Canada").lat(50.026422).long(8.543125)
+    val YVR = DBAirport.create.airportCode("YVR").name("Vancouver International DBAirport").city("Richmond, Vancouver").country("Canada").lat(50.026422).long(8.543125)
     YVR.save
-    val NRT = Airport.create.airportCode("NRT").name("Narita International Airport").city("Narita, Tokyo").country("Japan").lat(35.764722).long(140.386389)
+    val NRT = DBAirport.create.airportCode("NRT").name("Narita International DBAirport").city("Narita, Tokyo").country("Japan").lat(35.764722).long(140.386389)
     NRT.save
-    val JFK = Airport.create.airportCode("JFK").name("John F. Kennedy International Airport").city("New York City").country("USA").lat(40.63975).long(-73.778925)
+    val JFK = DBAirport.create.airportCode("JFK").name("John F. Kennedy International DBAirport").city("New York City").country("USA").lat(40.63975).long(-73.778925)
     JFK.save
-    val YUL = Airport.create.airportCode("YUL").name("Montreal-Pierre Elliott Trudeau International Airport").city("Dorval, Montreal").country("Canada").lat(45.470556).long(-73.740833)
+    val YUL = DBAirport.create.airportCode("YUL").name("Montreal-Pierre Elliott Trudeau International DBAirport").city("Dorval, Montreal").country("Canada").lat(45.470556).long(-73.740833)
     YUL.save
     
     // Setup some Flight times
@@ -138,7 +138,7 @@ class Boot extends Bootable{
     
     for(i <- (1 to 365)){
       // FROM FRA
-      val test = Flight.create.origin(FRA).destination(TXL).time(TIME_FRA_TXL_1.plusDays(i).toDate).length(1)
+      val test = create.origin(FRA).destination(TXL).time(TIME_FRA_TXL_1.plusDays(i).toDate).length(1)
       test.save
       Flight.create.origin(FRA).destination(TXL).time(TIME_FRA_TXL_2.plusDays(i).toDate).length(1).followingFlight(test).followingFlight(test).save
       Flight.create.origin(FRA).destination(TXL).time(TIME_FRA_TXL_3.plusDays(i).toDate).length(1).followingFlight(test).save
@@ -195,7 +195,7 @@ class Boot extends Bootable{
 	  Flight.create.origin(YUL).destination(CDG).time(TIME_YUL_CDG.plusDays(i).toDate).length(6.75).followingFlight(test).save
 	  Flight.create.origin(YUL).destination(YYZ).time(TIME_YUL_YYZ.plusDays(i).toDate).length(1.4).followingFlight(test).save
 	  Flight.create.origin(YUL).destination(YVR).time(TIME_YUL_YVR.plusDays(i).toDate).length(5.5).followingFlight(test).save
-    }
+    }*/
   }
 }
 
