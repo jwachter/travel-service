@@ -42,36 +42,55 @@ class Boot extends Bootable{
     // Create or update the Schema information for the model classes
     
     // Prevent bugs while database schema is not stable, start from blank!
-    // Onky uncomment when experiencing problems during development
-    // Schemifier.destroyTables_!!(Log.infoF _, DBAirport, Flight)
       
-    Schemifier.destroyTables_!!(Log.infoF _, Airport)
+    Schemifier.destroyTables_!!(Log.infoF _, Airport, City, Flight)
     
-    Schemifier.schemify(true, Log.infoF _, Airport)
+    Schemifier.schemify(true, Log.infoF _, Airport, City, Flight)
     
     initialize()
   }
   
   def initialize() {
-    /*// Setup some airports    
-    val FRA = DBAirport.create.airportCode("FRA").name("Frankfurt International DBAirport").city("Frankfurt").country("Germany").lat(50.026422).long(8.543125)
+    
+    // Initialize cities
+    val Frankfurt = City.create.name("Frankfurt").country("Germany")
+    Frankfurt.save
+    val Berlin = City.create.name("Berlin").country("Germany")
+    Berlin.save
+    val Zurich = City.create.name("Zurich").country("Switzerland")
+    Zurich.save
+    val Toronto = City.create.name("Toronto").country("Canada")
+    Toronto.save
+    val Vancouver = City.create.name("Vancouver").country("Canada")
+    Vancouver.save
+    val Montreal = City.create.name("Montreal").country("Canada")
+    Montreal.save
+    val Tokyo = City.create.name("Tokyo").country("Japan")
+    Tokyo.save
+    val NewYork = City.create.name("New York City").country("USA")
+    NewYork.save
+    val Paris = City.create.name("Paris").country("France")
+    Paris.save
+    
+    // Setup some airports    
+    val FRA = Airport.create.code("FRA").name("Frankfurt International Airport")._city(Frankfurt).lat(50.026422).long(8.543125)
     FRA.save
-    val TXL = DBAirport.create.airportCode("TXL").name("Tegel International DBAirport").city("Berlin").country("Germany").lat(52.559686).long(13.287711)
+    val TXL = Airport.create.code("TXL").name("Tegel International Airport")._city(Berlin).lat(52.559686).long(13.287711)
     TXL.save
-    val CDG = DBAirport.create.airportCode("CDG").name("Charles de Gaulle International DBAirport").city("Paris").country("France").lat(49.012778).long(2.55)
+    val CDG = Airport.create.code("CDG").name("Charles de Gaulle International Airport")._city(Paris).lat(49.012778).long(2.55)
     CDG.save
-    val ZRH = DBAirport.create.airportCode("ZRH").name("Zurich International DBAirport").city("Zurich").country("Switzerland").lat(47.464722).long(8.549167)
+    val ZRH = Airport.create.code("ZRH").name("Zurich International Airport")._city(Zurich).lat(47.464722).long(8.549167)
     ZRH.save
-    val YYZ = DBAirport.create.airportCode("YYZ").name("Toronto Pearson International DBAirport").city("Missisauga, Toronto").country("Canada").lat(43.677222).long(-79.630556)
+    val YYZ = Airport.create.code("YYZ").name("Toronto Pearson International Airport")._city(Frankfurt).lat(43.677222).long(-79.630556)
     YYZ.save
-    val YVR = DBAirport.create.airportCode("YVR").name("Vancouver International DBAirport").city("Richmond, Vancouver").country("Canada").lat(50.026422).long(8.543125)
+    val YVR = Airport.create.code("YVR").name("Vancouver International Airport")._city(Vancouver).lat(50.026422).long(8.543125)
     YVR.save
-    val NRT = DBAirport.create.airportCode("NRT").name("Narita International DBAirport").city("Narita, Tokyo").country("Japan").lat(35.764722).long(140.386389)
-    NRT.save
-    val JFK = DBAirport.create.airportCode("JFK").name("John F. Kennedy International DBAirport").city("New York City").country("USA").lat(40.63975).long(-73.778925)
-    JFK.save
-    val YUL = DBAirport.create.airportCode("YUL").name("Montreal-Pierre Elliott Trudeau International DBAirport").city("Dorval, Montreal").country("Canada").lat(45.470556).long(-73.740833)
+    val YUL = Airport.create.code("YUL").name("Montreal-Pierre Elliott Trudeau International Airport")._city(Montreal).lat(45.470556).long(-73.740833)
     YUL.save
+    val NRT = Airport.create.code("NRT").name("Narita International Airport")._city(Tokyo).lat(35.764722).long(140.386389)
+    NRT.save
+    val JFK = Airport.create.code("JFK").name("John F. Kennedy International Airport")._city(NewYork).lat(40.63975).long(-73.778925)
+    JFK.save
     
     // Setup some Flight times
     
@@ -138,64 +157,63 @@ class Boot extends Bootable{
     
     for(i <- (1 to 365)){
       // FROM FRA
-      val test = create.origin(FRA).destination(TXL).time(TIME_FRA_TXL_1.plusDays(i).toDate).length(1)
-      test.save
-      Flight.create.origin(FRA).destination(TXL).time(TIME_FRA_TXL_2.plusDays(i).toDate).length(1).followingFlight(test).followingFlight(test).save
-      Flight.create.origin(FRA).destination(TXL).time(TIME_FRA_TXL_3.plusDays(i).toDate).length(1).followingFlight(test).save
-      Flight.create.origin(FRA).destination(JFK).time(TIME_FRA_JFK_1.plusDays(i).toDate).length(8.75).followingFlight(test).save
-      Flight.create.origin(FRA).destination(JFK).time(TIME_FRA_JFK_2.plusDays(i).toDate).length(8.25).followingFlight(test).save
-      Flight.create.origin(FRA).destination(YUL).time(TIME_FRA_YUL.plusDays(i).toDate).length(8.2).followingFlight(test).save
-      Flight.create.origin(FRA).destination(CDG).time(TIME_FRA_CDG_1.plusDays(i).toDate).length(1.1).followingFlight(test).save
-      Flight.create.origin(FRA).destination(CDG).time(TIME_FRA_CDG_2.plusDays(i).toDate).length(1.1).followingFlight(test).save
-      Flight.create.origin(FRA).destination(CDG).time(TIME_FRA_CDG_3.plusDays(i).toDate).length(1.1).followingFlight(test).save
-      Flight.create.origin(FRA).destination(YYZ).time(TIME_FRA_YYZ_1.plusDays(i).toDate).length(8.5).followingFlight(test).save
-      Flight.create.origin(FRA).destination(YYZ).time(TIME_FRA_YYZ_2.plusDays(i).toDate).length(8.5).followingFlight(test).save
-      Flight.create.origin(FRA).destination(NRT).time(TIME_FRA_NRT.plusDays(i).toDate).length(11).followingFlight(test).save
-      Flight.create.origin(FRA).destination(YVR).time(TIME_FRA_YVR.plusDays(i).toDate).length(10.5).followingFlight(test).save
-      Flight.create.origin(FRA).destination(ZRH).time(TIME_FRA_ZRH_1.plusDays(i).toDate).length(1).followingFlight(test).save
-      Flight.create.origin(FRA).destination(ZRH).time(TIME_FRA_ZRH_2.plusDays(i).toDate).length(1).followingFlight(test).save
+      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(TXL).departure(TIME_FRA_TXL_1.plusDays(i).toDate).duration(1).save
+      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(TXL).departure(TIME_FRA_TXL_2.plusDays(i).toDate).duration(1).save
+      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(TXL).departure(TIME_FRA_TXL_3.plusDays(i).toDate).duration(1).save
+      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(JFK).departure(TIME_FRA_JFK_1.plusDays(i).toDate).duration(9).save
+      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(JFK).departure(TIME_FRA_JFK_2.plusDays(i).toDate).duration(9).save
+      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(YUL).departure(TIME_FRA_YUL.plusDays(i).toDate).duration(8).save
+      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(CDG).departure(TIME_FRA_CDG_1.plusDays(i).toDate).duration(1).save
+      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(CDG).departure(TIME_FRA_CDG_2.plusDays(i).toDate).duration(1).save
+      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(CDG).departure(TIME_FRA_CDG_3.plusDays(i).toDate).duration(1).save
+      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(YYZ).departure(TIME_FRA_YYZ_1.plusDays(i).toDate).duration(9).save
+      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(YYZ).departure(TIME_FRA_YYZ_2.plusDays(i).toDate).duration(9).save
+      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(NRT).departure(TIME_FRA_NRT.plusDays(i).toDate).duration(11).save
+      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(YVR).departure(TIME_FRA_YVR.plusDays(i).toDate).duration(11).save
+      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(ZRH).departure(TIME_FRA_ZRH_1.plusDays(i).toDate).duration(1).save
+      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(ZRH).departure(TIME_FRA_ZRH_2.plusDays(i).toDate).duration(1).save
       
       // origin TXL
-      Flight.create.origin(TXL).destination(FRA).time(TIME_TXL_FRA_1.plusDays(i).toDate).length(1.25).followingFlight(test).save
-      Flight.create.origin(TXL).destination(FRA).time(TIME_TXL_FRA_2.plusDays(i).toDate).length(1.25).followingFlight(test).save
-      Flight.create.origin(TXL).destination(CDG).time(TIME_TXL_CDG.plusDays(i).toDate).length(1.75).followingFlight(test).save
-      Flight.create.origin(TXL).destination(ZRH).time(TIME_TXL_ZRH.plusDays(i).toDate).length(1.3).followingFlight(test).save
+      Flight.create.number(TXL.code.is+i)._origin(TXL)._destination(FRA).departure(TIME_TXL_FRA_1.plusDays(i).toDate).duration(1).save
+      Flight.create.number(TXL.code.is+i)._origin(TXL)._destination(FRA).departure(TIME_TXL_FRA_2.plusDays(i).toDate).duration(1).save
+      Flight.create.number(TXL.code.is+i)._origin(TXL)._destination(CDG).departure(TIME_TXL_CDG.plusDays(i).toDate).duration(2).save
+      Flight.create.number(TXL.code.is+i)._origin(TXL)._destination(ZRH).departure(TIME_TXL_ZRH.plusDays(i).toDate).duration(1).save
     
       // origin CDG
-      Flight.create.origin(CDG).destination(TXL).time(TIME_CDG_TXL.plusDays(i).toDate).length(1.5).followingFlight(test).save
-      Flight.create.origin(CDG).destination(TXL).time(TIME_CDG_FRA_1.plusDays(i).toDate).length(1.3).followingFlight(test).save
-      Flight.create.origin(CDG).destination(TXL).time(TIME_CDG_FRA_2.plusDays(i).toDate).length(1.3).followingFlight(test).save
-      Flight.create.origin(CDG).destination(TXL).time(TIME_CDG_YUL.plusDays(i).toDate).length(7.4).followingFlight(test).save
-      Flight.create.origin(CDG).destination(TXL).time(TIME_CDG_YYZ.plusDays(i).toDate).length(8.4).followingFlight(test).save
+      Flight.create.number(CDG.code.is+i)._origin(CDG)._destination(TXL).departure(TIME_CDG_TXL.plusDays(i).toDate).duration(2).save
+      Flight.create.number(CDG.code.is+i)._origin(CDG)._destination(TXL).departure(TIME_CDG_FRA_1.plusDays(i).toDate).duration(1).save
+      Flight.create.number(CDG.code.is+i)._origin(CDG)._destination(TXL).departure(TIME_CDG_FRA_2.plusDays(i).toDate).duration(1).save
+      Flight.create.number(CDG.code.is+i)._origin(CDG)._destination(TXL).departure(TIME_CDG_YUL.plusDays(i).toDate).duration(7).save
+      Flight.create.number(CDG.code.is+i)._origin(CDG)._destination(TXL).departure(TIME_CDG_YYZ.plusDays(i).toDate).duration(8).save
     
       // origin ZRH
-      Flight.create.origin(ZRH).destination(TXL).time(TIME_ZRH_TXL.plusDays(i).toDate).length(1.5).followingFlight(test).save
-      Flight.create.origin(ZRH).destination(FRA).time(TIME_ZRH_FRA.plusDays(i).toDate).length(1).followingFlight(test).save
-      Flight.create.origin(ZRH).destination(YYZ).time(TIME_ZRH_YYZ.plusDays(i).toDate).length(9.1).followingFlight(test).save
+      Flight.create.number(ZRH.code.is+i)._origin(ZRH)._destination(TXL).departure(TIME_ZRH_TXL.plusDays(i).toDate).duration(1).save
+      Flight.create.number(ZRH.code.is+i)._origin(ZRH)._destination(FRA).departure(TIME_ZRH_FRA.plusDays(i).toDate).duration(1).save
+      Flight.create.number(ZRH.code.is+i)._origin(ZRH)._destination(YYZ).departure(TIME_ZRH_YYZ.plusDays(i).toDate).duration(9).save
     
 	  // origin YYZ
-	  Flight.create.origin(YYZ).destination(YUL).time(TIME_YYZ_YUL_1.plusDays(i).toDate).length(1.1).followingFlight(test).save
-	  Flight.create.origin(YYZ).destination(YUL).time(TIME_YYZ_YUL_2.plusDays(i).toDate).length(1.1).followingFlight(test).save
-	  Flight.create.origin(YYZ).destination(CDG).time(TIME_YYZ_CDG.plusDays(i).toDate).length(7.5).followingFlight(test).save
-	  Flight.create.origin(YYZ).destination(YVR).time(TIME_YYZ_YVR.plusDays(i).toDate).length(5.1).followingFlight(test).save
+	  Flight.create.number(YYZ.code.is+i)._origin(YYZ)._destination(YUL).departure(TIME_YYZ_YUL_1.plusDays(i).toDate).duration(1).save
+	  Flight.create.number(YYZ.code.is+i)._origin(YYZ)._destination(YUL).departure(TIME_YYZ_YUL_2.plusDays(i).toDate).duration(1).save
+	  Flight.create.number(YYZ.code.is+i)._origin(YYZ)._destination(CDG).departure(TIME_YYZ_CDG.plusDays(i).toDate).duration(8).save
+	  Flight.create.number(YYZ.code.is+i)._origin(YYZ)._destination(YVR).departure(TIME_YYZ_YVR.plusDays(i).toDate).duration(5).save
     
 	  // origin YVR
-	  Flight.create.origin(YVR).destination(FRA).time(TIME_YVR_FRA.plusDays(i).toDate).length(10.1).followingFlight(test).save
-	  Flight.create.origin(YVR).destination(YUL).time(TIME_YVR_YUL.plusDays(i).toDate).length(4.75).followingFlight(test).save
-	  Flight.create.origin(YVR).destination(YYZ).time(TIME_YVR_YYZ.plusDays(i).toDate).length(4.4).followingFlight(test).save
+	  Flight.create.number(YVR.code.is+i)._origin(YVR)._destination(FRA).departure(TIME_YVR_FRA.plusDays(i).toDate).duration(10).save
+	  Flight.create.number(YVR.code.is+i)._origin(YVR)._destination(YUL).departure(TIME_YVR_YUL.plusDays(i).toDate).duration(5).save
+	  Flight.create.number(YVR.code.is+i)._origin(YVR)._destination(YYZ).departure(TIME_YVR_YYZ.plusDays(i).toDate).duration(4).save
     
 	  // origin NRT
-	  Flight.create.origin(NRT).destination(FRA).time(TIME_NRT_FRA.plusDays(i).toDate).length(11.75).followingFlight(test).save
+	  Flight.create.number(NRT.code.is+i)._origin(NRT)._destination(FRA).departure(TIME_NRT_FRA.plusDays(i).toDate).duration(12).save
     
 	  // origin JFK
-	  Flight.create.origin(JFK).destination(FRA).time(TIME_JFK_FRA.plusDays(i).toDate).length(7.4).followingFlight(test).save
+	  Flight.create.number(JFK.code.is+i)._origin(JFK)._destination(FRA).departure(TIME_JFK_FRA.plusDays(i).toDate).duration(7).save
 
 	  // origin YUL
-	  Flight.create.origin(YUL).destination(FRA).time(TIME_YUL_FRA.plusDays(i).toDate).length(7.4).followingFlight(test).save
-	  Flight.create.origin(YUL).destination(CDG).time(TIME_YUL_CDG.plusDays(i).toDate).length(6.75).followingFlight(test).save
-	  Flight.create.origin(YUL).destination(YYZ).time(TIME_YUL_YYZ.plusDays(i).toDate).length(1.4).followingFlight(test).save
-	  Flight.create.origin(YUL).destination(YVR).time(TIME_YUL_YVR.plusDays(i).toDate).length(5.5).followingFlight(test).save
-    }*/
+	  Flight.create.number(YUL.code.is+i)._origin(YUL)._destination(FRA).departure(TIME_YUL_FRA.plusDays(i).toDate).duration(7).save
+	  Flight.create.number(YUL.code.is+i)._origin(YUL)._destination(CDG).departure(TIME_YUL_CDG.plusDays(i).toDate).duration(7).save
+	  Flight.create.number(YUL.code.is+i)._origin(YUL)._destination(YYZ).departure(TIME_YUL_YYZ.plusDays(i).toDate).duration(1).save
+	  Flight.create.number(YUL.code.is+i)._origin(YUL)._destination(YVR).departure(TIME_YUL_YVR.plusDays(i).toDate).duration(6).save
+    }
   }
 }
 

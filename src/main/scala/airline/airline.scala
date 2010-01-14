@@ -1,4 +1,4 @@
-package airline
+package airline {
 
 import world.{Airport, City, Place}
 import java.util.Date
@@ -193,3 +193,4 @@ trait Airline {
   // TODO: need more information about Credit Card processing services. Think about it later. 
 }
 
+}

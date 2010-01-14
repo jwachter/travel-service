@@ -1,4 +1,4 @@
-package world
+package world {
 
 abstract class Place
 
@@ -15,4 +15,5 @@ case class Airport(code: Symbol, name: String, city: City) extends Place {
     </airport>
     // note: must convert Symbol to string by invoking its .name method to write in XML
     //       otherwise the string output in XML will contain the quote mark of symbols
+}
 }
