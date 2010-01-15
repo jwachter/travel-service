@@ -49,7 +49,8 @@ package lufthansa {
                                     case hops if (hops - 1 < maxHops) => {
 
                                             // search only for flights after landing ... in future we should also support some transit duration
-                                            val newStartDate = new DateTime(flight.departure).plusHours (flight.duration)
+                                            val dep : Date = flight.departure
+                                            val newStartDate = new DateTime(dep).plusHours (flight.duration)
 
                                             val flightsNew : List [Flight] = Flight.findInRangeAndOrigin( newStartDate.toDate, maxReachDestinationDate, flight.destination)
 
