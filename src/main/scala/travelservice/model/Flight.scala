@@ -14,9 +14,14 @@ object Flight extends Flight with LongKeyedMetaMapper[Flight] {
   
   def findByHours(earliest:Date, hours:Int) = findInRange(earliest, new DateTime(earliest).plusHours(hours).toDate)
   def findByDays(earliest:Date, days:Int) = findInRange(earliest, new DateTime(earliest).plusDays(days).toDate)
+  def findByDaysAndOrigin(earliest:Date, days:Int, origin:Airport) = findInRangeAndOrigin(earliest, new DateTime(earliest).plusDays(days).toDate, origin)
+
+
   def findByWeeks(earliest:Date, weeks:Int) = findInRange(earliest, new DateTime(earliest).plusWeeks(weeks).toDate)
   def findByMonths(earliest:Date, months:Int) = findInRange(earliest, new DateTime(earliest).plusMonths(months).toDate)
   def findInRange(from:Date, to:Date) = Flight.findAll(By_>(Flight.departure, from), By_<(Flight.departure, to))
+
+  def findInRangeAndOrigin(from:Date, to:Date, origin:Airport) = Flight.findAll(By(Flight._origin, origin), By_>(Flight.departure, from), By_<(Flight.departure, to))
 }
 
 class Flight extends LongKeyedMapper[Flight] with IdPK{
