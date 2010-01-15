@@ -13,7 +13,7 @@ class FlightHelper {
     def getContent =         
         {
             val lufthansa = new Lufthansa()
-            val its = lufthansa.searchOneway (FRA, YYZ, new DateMidnight().toDate)
+            val its = lufthansa.searchOneway (FRA, YVR, new DateMidnight().toDate)
 
             its map (it => it.toXML) //<li><b>Flight</b>{it.origin} to {it.destination} in {it.duration} hours segments: {it.segments} price is {it.price}</li>
 

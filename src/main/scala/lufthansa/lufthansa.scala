@@ -40,7 +40,7 @@ package lufthansa {
                         // reached target airport
                         case dest if (dest == destination) => List(flight) :: Nil
 
-                        // try recursive find
+                            // try recursive find
                         case _ if (visited.contains (flight.destination) == false) => {
 
                                 // match for max hops
@@ -56,7 +56,7 @@ package lufthansa {
                                             getFlightsTo (flightsNew, flight.destination :: visited, destination, maxHops, maxReachDestinationDate) map ( flights => flight :: flights )
                                         }
 
-                                    // did not reach destination Airport with given hops
+                                        // did not reach destination Airport with given hops
                                     case _ => Nil
                                 }
                             }
@@ -72,8 +72,8 @@ package lufthansa {
                 }
             }
 
-            val _origin : Airport = Airport.findByCode ("FRA").openOr(null)
-            val _destination : Airport = Airport.findByCode ("YUL").openOr (null)
+            val _origin : Airport = Airport.findByCode (origin.code.toString).openOr(null)
+            val _destination : Airport = Airport.findByCode (destination.code.toString).openOr (null)
 
             assert (_origin != null)
             assert (_destination != null)
