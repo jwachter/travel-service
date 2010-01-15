@@ -8,8 +8,10 @@ package lufthansa {
     import _root_.org.joda.time._
     import travelservice.model._
 
+    // Implement our version of the Airline spec
     class Lufthansa extends Airline {
-
+    	
+    	// transfrom our search result to the interface types 
         private def toSingleSegmentItineraries (flightSeqs : List[List[Flight]], origin: world.Airport, destination: world.Airport) : List[Itinerary] = {
             flightSeqs.map ( flightseq => {
 
@@ -28,53 +30,58 @@ package lufthansa {
             )
         }
 
-        //def searchOneway(origin: Place, destination: Place, date: Date): Seq[Itinerary]
+        // Search one way flights between two different Airports on a specific date.
         override def searchOneway(origin: world.Airport, destination:world.Airport, date: Date): Seq[Itinerary] = {
 
             def getFlightsTo (flights : List[Flight], visited: List[Airport], destination: Airport, maxHops: Int, maxReachDestinationDate : Date) : List[List[Flight]] = {
-
+            	// Get all flights that are possible after having taken the given flight en route to the destination whereas some Airports
+            	// are already visited and shouldn't be considered anymore.
                 def getFlightsStartingWith (flight: Flight, visited: List[Airport], destination: Airport) : List[List[Flight]] = {
-
+                	// Check the reached destination by the current flight
                     flight.destination match {
 
-                        // reached target airport
+                        // reached target airport, return the flights
                         case dest if (dest == destination) => List(flight) :: Nil
 
-                            // try recursive find
+                         // try recursive find
                         case _ if (visited.contains (flight.destination) == false) => {
 
                                 // match for max hops
                                 visited.length match {
-
+                                	// Are we inside our range?
                                     case hops if (hops - 1 < maxHops) => {
 
                                             // search only for flights after landing ... in future we should also support some transit duration
                                             val dep : Date = flight.departure
                                             val newStartDate = new DateTime(dep).plusHours (flight.duration)
 
+                                            // Find all flights departing on the right time window
                                             val flightsNew : List [Flight] = Flight.findInRangeAndOrigin( newStartDate.toDate, maxReachDestinationDate, flight.destination)
 
+                                            // Find all connections to our target. Add the current airport to visited airports to avvoid circles. Add current flight in front of the rest of the journey generated
                                             getFlightsTo (flightsNew, flight.destination :: visited, destination, maxHops, maxReachDestinationDate) map ( flights => flight :: flights )
                                         }
 
-                                        // did not reach destination Airport with given hops
+                                    // did not reach destination Airport with given hops
                                     case _ => Nil
                                 }
                             }
-
+                        // We didn't find a satisfying flight
                         case _ => Nil
                     }
                 }
 
                 // find list of flights to the destination airport (segments) for all flights starting at the origin airport
                 flights match {
+                	// Walk through the algorithm
                     case hd :: tl => getFlightsStartingWith (hd, visited, destination) ::: getFlightsTo (tl, visited, destination, maxHops, maxReachDestinationDate)
                     case _ => Nil
                 }
             }
-
-            val _origin : Airport = Airport.findByCode ("FRA").openOr(null)
-            val _destination : Airport = Airport.findByCode ("YVR").openOr (null)
+            
+            // Load from input interface classes and look if we have the Airports
+            val _origin : Airport = Airport.findByCode (origin.code.name).openOr(null)
+            val _destination : Airport = Airport.findByCode (destination.code.name).openOr (null)
 
             assert (_origin != null)
             assert (_destination != null)
@@ -97,39 +104,15 @@ package lufthansa {
             toSingleSegmentItineraries (possibleFlightLines, origin, destination)
         }
 
-        //def searchRoundtrip(origin: Place, destination: Place, departureDate: Date, returnDate: Date): Seq[Itinerary]
+        // Get all Itineraries that let you travel from one Airport to another and back again on two specific dates
+        // TODO implement using searchOneway
         override def searchRoundtrip(origin: world.Airport, destination: world.Airport, departureDate: Date, returnDate: Date): Seq[Itinerary] = {
             Nil
         }
 
-        //override def searchMultisegment(trips: Seq[(Airport, Airport, Date)]): Seq[Itinerary]
+        // Get all Itineraries that let you travel between a sequence of airport pairs on specific dates
+        // TODO implement this using the searchOneway
         override def searchMultisegment(trips: Seq[(world.Airport, world.Airport, Date)]): Seq[Itinerary] = {
-
-            /*
-             // for multisegment itinerary
-             def toItinerary (flightSeqs : List[List[Flight]]) : Itinerary = {
-
-             var segments = List [Segment] ()
-
-             for (flightseq <- flightSeqs){
-             val hops = for (flight <- flightseq) yield flight.toHop
-             // calculate sum of durations
-             val singleDurations : List [Int] = flightseq.map (flight => flight.duration)
-             val sumOfDurations = singleDurations.foldLeft(0)((a,b) => a+b)
-
-             val seg = new Segment (origin, destination, hops.head.departureDate, sumOfDurations, hops)
-
-             segments = seg :: segments
-             }
-
-             val segmentDurations : List [Int] = segments.map (seg => seg.duration)
-             val segmentSumOfDurations = segmentDurations.foldLeft(0)((a,b) => a+b)
-
-             new Itinerary ("newIt", segments.head.departureDate, segmentSumOfDurations, origin, destination, segments, 100)
-             }
-             */
-
-
             Nil
         }
 
