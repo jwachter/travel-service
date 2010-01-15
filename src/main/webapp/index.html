@@ -1,12 +1,95 @@
 <lift:surround with="default" at="content">
-		<h2>Welcome to your project!</h2>
+        
+  <link rel="stylesheet" type="text/css" href="/style/ui.all.css" />
+  <link rel="stylesheet" type="text/css" href="/style/ui.datepicker.css" />
+  <script type="text/javascript" src="/scripts/jquery-ui.min.js"></script>
+  <script type="text/javascript" src="/scripts/jquery.datePicker.js"></script>
+  
+  
+	<h2>Lufthansa travel service</h2>
+	<!--<lift:FlightHelper.showCount />-->
 
-                <ul>
-                    <li>hello world</li>
-                    
-                </ul>
-                <lift:FlightHelper.getContent />
-
-                
+	<h3>Search one way</h3>
+	<form method="POST" action="oneWayResult.html"> 
+    <table>
+      <tr>
+        <td>From:</td>
+        <td><input type="text" name="from" /></td>
+      </tr>
+      <tr>
+        <td>To:</td>
+        <td><input type="text" name="to" /></td>
+      </tr>
+      <tr>
+        <td>Departure:</td>
+        <td>
+          <input type="text" name="departure" class="datepicker"/>
+        </td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td><input type="submit" value="search" /></td>
+      </tr>
+    </table>
+  </form>
+  
+  <h3>Search roundtrip</h3>
+  <lift:SearchHelper.searchRoundtrip form="post">
+    <table>
+      <tr>
+        <td>From:</td>
+        <td><query:from /></td>
+      </tr>
+      <tr>
+        <td>To:</td>
+        <td><query:to /></td>
+      </tr>
+      <tr>
+        <td>Departure:</td>
+        <td>
+          <query:departure />
+        </td>
+      </tr>
+      <tr>
+        <td>Return date:</td>
+        <td>
+          <query:returnDate />
+        </td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td><query:submit /></td>
+      </tr>
+    </table>
+  </lift:SearchHelper.searchRoundtrip>
+  
+  <h3>Search multi segment</h3>
+  <lift:SearchHelper.searchMultiSegment form="post">
+    <table>
+      <tr>
+        <td>From:</td>
+        <td><query:from /></td>
+      </tr>
+      <tr>
+        <td>To:</td>
+        <td><query:to /></td>
+      </tr>
+      <tr>
+        <td>Departure:</td>
+        <td>
+          <query:departure />
+        </td>
+      </tr>
+      <tr>
+        <td>&nbsp;</td>
+        <td><query:submit /></td>
+      </tr>
+    </table>
+  </lift:SearchHelper.searchMultiSegment>
+  
+  <script type="text/javascript">
+    $(function() {
+      $('.datepicker').datepicker({dateFormat:'yy/mm/dd'});
+    });
+  </script>
 </lift:surround>
-
