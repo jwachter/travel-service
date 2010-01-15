@@ -72,8 +72,8 @@ package lufthansa {
                 }
             }
 
-            val _origin : Airport = Airport.findByCode (origin.code.toString).openOr(null)
-            val _destination : Airport = Airport.findByCode (destination.code.toString).openOr (null)
+            val _origin : Airport = Airport.findByCode ("FRA").openOr(null)
+            val _destination : Airport = Airport.findByCode ("YVR").openOr (null)
 
             assert (_origin != null)
             assert (_destination != null)
