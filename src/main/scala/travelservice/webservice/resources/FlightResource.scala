@@ -53,16 +53,10 @@ object FlightResource extends RESTResource{
  	    }
  	    case req@Req("api" :: "flight" :: airportcode :: year :: month :: Nil, _, _) => {
  	      val airport = Airport.findByCode(airportcode)
- 	      println("Phase 1" + airport.toString)
  	      airport match {
  	        case Full(airport) => {
- 	        	println("Phase 2a")
- 	        	println(year)
- 	        	println(month)
 	 	      val from = new DateTime(year.toInt, month.toInt, 1, 0, 0, 0, 0); 
- 	          println("Phase 2a")
 	 	      val result = airport.findFlightsInDateRange(from.toDate, new DateMidnight(from.plusMonths(1)).toDate)
-	 	      println("Phase 2b")
 	 	      ct match {
 	 	    	case "json" => println("Phase 3a");Full(JSONResponse(Printer.compact(JsonAST.render(JArray(result.map(it => it.toJSON))))))
 	 	    	case "xml" => println("Phase 3b");Full(XmlResponse(<flights>{result.map(it => it.toXML)}</flights>))
