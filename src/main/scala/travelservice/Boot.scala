@@ -24,6 +24,7 @@ import _root_.org.joda.time._
 import Helpers._
 
 import travelservice.model._
+import travelservice.webservice.resources._
 
 /**
   * A class that's instantiated early and run.  It allows the application
@@ -31,13 +32,17 @@ import travelservice.model._
   */
 class Boot extends Bootable{
   def boot {
-    // where to search snippet
-    LiftRules.addToPackages("travelservice.webservice")
+    // Which packages are treated as sources for views and snippets.
     LiftRules.addToPackages("travelservice.webclient") 
     
     // Prepare the database connection when JDBC is available
     if (!DB.jndiJdbcConnAvailable_?)
       DB.defineConnectionManager(DefaultConnectionIdentifier, DBVendor)
+    
+    LiftRules.dispatch.prepend(SearchResource.dispatch)
+    LiftRules.dispatch.prepend(CityResource.dispatch)
+    LiftRules.dispatch.prepend(AirportResource.dispatch)
+    LiftRules.dispatch.prepend(FlightResource.dispatch)
 
     // Create or update the Schema information for the model classes
     
