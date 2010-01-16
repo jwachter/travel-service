@@ -107,7 +107,17 @@ package lufthansa {
         // Get all Itineraries that let you travel from one Airport to another and back again on two specific dates
         // TODO implement using searchOneway
         override def searchRoundtrip(origin: world.Airport, destination: world.Airport, departureDate: Date, returnDate: Date): Seq[Itinerary] = {
-            Nil
+            
+    		// find Itineraries in both directions
+    		val to = searchOneway(origin, destination, departureDate)
+    		val back = searchOneway(destination, origin, returnDate)
+          
+    		// Combine to and back Itineraries
+    		for(p1 <- to){
+    		  
+    		}
+      
+    		Nil
         }
 
         // Get all Itineraries that let you travel between a sequence of airport pairs on specific dates

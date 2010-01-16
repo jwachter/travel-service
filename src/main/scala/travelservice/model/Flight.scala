@@ -75,12 +75,12 @@ class Flight extends LongKeyedMapper[Flight] with IdPK{
 	object duration extends MappedInt(this)
  
 	// Transforms the Object into XML
+	// TODO format the date
 	def toXML = 
 		<flight>
 		 <number>{this.number.is}</number>
 		 <origin>{this.origin.code.is}</origin>
 		 <destination>{this.destination.code.is}</destination>
-		 // TODO format the date
 		 <departure>{this.departure.is}</departure>
 		 <duration>{this.duration.is}</duration>
 		</flight>
@@ -88,6 +88,8 @@ class Flight extends LongKeyedMapper[Flight] with IdPK{
     // Transforms the Object into a JSON representation
 	// TODO format the date
 	def toJSON = JObject(List(JField("number", JString(this.number.is)),JField("origin", JString(this.origin.code.is)),JField("destination", JString(this.destination.code.is)),JField("departure", JString(this.departure.is.toString)),JField("duration", JString(this.duration.is.toString))))
+ 
+	def toXHTML = <li>{this.toString}</li>
  
 	// Transforms the Object into the interface type
 	def toHop = new Hop(this.number.is, this.origin.toAirport, this.destination.toAirport, this.departure.is, this.duration.is)

@@ -21,9 +21,11 @@ class FlightTable
     
     println( "DEBUG: " + from + " " + to + " " + departure )
     
-    val ap = Airport.find( By( Airport._city.name, from ) ).open_!
+    val city = City.find(By(City.name, from)).open_!
     
-    Flight.findByDaysAndOrigin( departure, 3, ap )
+    val ap = Airport.find( By( Airport._city, city) ).open_!
+    
+    val flights = Flight.findByDaysAndOrigin( departure, 3, ap )
     
     //bind(
       //"flight",
@@ -33,6 +35,8 @@ class FlightTable
       //"arrival" -> Text( "bla3" ),
       //"destination" -> Text( "bla4" )
     //)
+  
+    <ul>{flights.map(e => e.toXHTML)}</ul>
   }
   
   def roundtrip( html : NodeSeq ) =
