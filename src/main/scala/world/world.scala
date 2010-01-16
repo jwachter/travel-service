@@ -4,6 +4,8 @@ package world {
 
     case class City(name: String, country: String) extends Place {
         def toXML = <city>{ name + ", " + country }</city>
+        
+        override def toString = name + ", " + country
     }
 
     case class Airport(code: Symbol, name: String, city: City) extends Place {
@@ -15,6 +17,8 @@ package world {
         </airport>
         // note: must convert Symbol to string by invoking its .name method to write in XML
         //       otherwise the string output in XML will contain the quote mark of symbols
+        
+         override def toString = "[" + code.name + "] " + name + " - " + city.toString
     }
 
 

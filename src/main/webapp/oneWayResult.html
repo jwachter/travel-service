@@ -1,12 +1,22 @@
 <lift:surround with="default" at="content">
-  <lift:FlightTable.oneWay>
     <table>
       <tr>
-        <td><flight:departure /></td>
-        <td><flight:origin/></td>
-        <td><flight:arrival /></td>
-        <td><flight:destination /></td>
+        <!--<td>Id</td>-->
+        <td>Departure</td>
+        <td>Origin</td>
+        <td>Arrival</td>
+        <td>Destination</td>
+        <td>Price</td>
       </tr>
+      <lift:FlightTable.oneway>
+        <tr>
+          <!--<td><flight:id /></td>-->
+          <td><flight:departure /></td>
+          <td><flight:origin/></td>
+          <td><flight:arrival /></td>
+          <td><flight:destination /></td>
+          <td><flight:price /></td>
+        </tr>
+      </lift:FlightTable.oneway>      
     </table>
-  </lift:FlightTable.oneWay>
 </lift:surround>
