@@ -45,14 +45,15 @@ class Boot extends Bootable{
     LiftRules.dispatch.prepend(FlightResource.dispatch)
 
     // Create or update the Schema information for the model classes
+    // Remove comments for 1 run to initialize the database
     
     // Prevent bugs while database schema is not stable, start from blank!
       
-    Schemifier.destroyTables_!!(Log.infoF _, Airport, City, Flight)
+    //Schemifier.destroyTables_!!(Log.infoF _, Airport, City, Flight)
     
-    Schemifier.schemify(true, Log.infoF _, Airport, City, Flight)
+    //Schemifier.schemify(true, Log.infoF _, Airport, City, Flight)
     
-    initialize()
+    //initialize()
   }
   
   def initialize() {

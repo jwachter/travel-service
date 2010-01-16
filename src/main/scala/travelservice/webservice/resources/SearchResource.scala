@@ -16,4 +16,7 @@ object SearchResource extends RESTResource{
  
  	override val supportedContentTypes = List("xml","json")
   
+ 	override val get = (r:Req, ct:String) => {
+ 	  Full(NotFoundResponse())
+ 	}
 }
