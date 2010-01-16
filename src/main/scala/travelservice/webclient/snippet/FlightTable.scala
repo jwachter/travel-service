@@ -38,7 +38,7 @@ class FlightTable
       i => bind(
         "flight",
         html,
-        "id" -> Text( i.id ),
+        //"id" -> Text( i.id ),
         "departure" -> Text( i.departureDate.toString ),
         "origin" -> Text( i.origin.toString ),
         "arrival" -> Text( ( new DateTime( departure ).plusMinutes( i.duration ) ).toString ),
