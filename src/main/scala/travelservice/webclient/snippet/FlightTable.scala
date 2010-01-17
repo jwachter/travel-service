@@ -69,6 +69,13 @@ class FlightTable
   
   def multisegment( html : NodeSeq ) =
   {
+    println( S.request.open_!.headers.toString )
+    
+	  val origins = S.request.open_!.params.get( "origins" ).get.head
+	  val destinations = S.request.open_!.params.get( "destinations" ).get.head
+	  val departures = S.request.open_!.params.get( "departures" ).get.head
+	  
+	  println( "DEBUG: " + origins + "\n" + destinations + "\n" + departures )
 	  Nil
   }
 }
