@@ -41,11 +41,15 @@ class SearchHelper {
       //destinations = to        :: destinations
       //departures   = departure :: departures
       println( "origins: " + from )
+      println( "destinations: " + to )
+      println( "departures: " + departure )
       S.setHeader( "origins", from )
 	    S.setHeader( "destinations", to )
 	    S.setHeader( "departures", departure )
       Noop
     }
+    
+    
 	 	  
 	  bind(
 	    "query",

@@ -9,6 +9,7 @@ import _root_.org.joda.time._
 import _root_.scala.xml._
 
 import travelservice.model._
+import travelservice.helper._
 import lufthansa._
 
 class FlightTable
@@ -27,18 +28,7 @@ class FlightTable
     
     val its = lufthansa.searchOneway( oap.toAirport, dap.toAirport, departure )
 
-    its.flatMap(
-      i => bind(
-        "flight",
-        html,
-        //"id" -> Text( i.id ),
-        "departure" -> Text( i.departureDate.toString ),
-        "origin" -> Text( i.origin.toString ),
-        "arrival" -> Text( ( new DateTime( i.departureDate ).plusMinutes( i.duration ) ).toString ),
-        "destination" -> Text( i.destination.toString ),
-        "price" -> Text( i.price.toString)
-      )
-	)
+    its.flatMap(i => ItineraryHelper.itineraryToXHTML(i))
   }
   
   def roundtrip( html : NodeSeq ) =
@@ -53,18 +43,7 @@ class FlightTable
     
     val its = lufthansa.searchRoundtrip( oap.toAirport, dap.toAirport, departure, returnDate )
 
-    its.flatMap(
-      i => bind(
-        "flight",
-        html,
-        //"id" -> Text( i.id ),
-        "departure" -> Text( i.departureDate.toString ),
-        "origin" -> Text( i.origin.toString ),
-        "returnDate" -> Text( ( new DateTime( i.departureDate ).plusMinutes( i.duration ) ).toString ),
-        "destination" -> Text( i.destination.toString ),
-        "price" -> Text( i.price.toString)
-      )
-	)
+    its.flatMap(i => ItineraryHelper.itineraryToXHTML(i))
   }
   
   def multisegment( html : NodeSeq ) =

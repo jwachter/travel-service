@@ -10,20 +10,20 @@ import _root_.java.util.Date
 import travelservice.model._
 import travelservice.webservice.rest._
 
-object FlightResource extends RESTResource{
+object FlightsResource extends RESTResource{
 	
 	override val dispatch : LiftRules.DispatchPF = {
-	  case r@Req("api" :: "flight" :: _, _, GetRequest) => () => process(r)
-	  case r@Req("api" :: "flight" :: _, _, PostRequest) => () => process(r)
-	  case r@Req("api" :: "flight" :: _, _, PutRequest) => () => process(r)
-	  case r@Req("api" :: "flight" :: _, _, DeleteRequest) => () => process(r)
+	  case r@Req("api" :: "flights" :: _, _, GetRequest) => () => process(r)
+	  case r@Req("api" :: "flights" :: _, _, PostRequest) => () => process(r)
+	  case r@Req("api" :: "flights" :: _, _, PutRequest) => () => process(r)
+	  case r@Req("api" :: "flights" :: _, _, DeleteRequest) => () => process(r)
 	}
  
  	override val supportedContentTypes = List("xml","json")
 
  	override val get = (r:Req, ct:String) => {
  	  r match {
- 	    case req@Req("api" :: "flight" :: airportcode :: year :: month :: day :: hour :: Nil, _, _) => {
+ 	    case req@Req("api" :: "flights" :: airportcode :: year :: month :: day :: hour :: Nil, _, _) => {
  	      val airport = Airport.findByCode(airportcode)
  	      airport match {
  	        case Full(airport) => {
@@ -37,7 +37,7 @@ object FlightResource extends RESTResource{
  	        case _ => Full(NotFoundResponse())
  	      } 
  	    }
- 	    case req@Req("api" :: "flight" :: airportcode :: year :: month :: day :: Nil, _, _) => {
+ 	    case req@Req("api" :: "flights" :: airportcode :: year :: month :: day :: Nil, _, _) => {
  	      val airport = Airport.findByCode(airportcode)
  	      airport match {
  	        case Full(airport) => {
@@ -51,7 +51,7 @@ object FlightResource extends RESTResource{
  	        case _ => Full(NotFoundResponse())
  	      }
  	    }
- 	    case req@Req("api" :: "flight" :: airportcode :: year :: month :: Nil, _, _) => {
+ 	    case req@Req("api" :: "flights" :: airportcode :: year :: month :: Nil, _, _) => {
  	      val airport = Airport.findByCode(airportcode)
  	      airport match {
  	        case Full(airport) => {
@@ -65,7 +65,7 @@ object FlightResource extends RESTResource{
  	        case _ => Full(NotFoundResponse())
  	      }
  	    }
- 	    case req@Req("api" :: "flight" :: airportcode :: year :: Nil, _, _) => {
+ 	    case req@Req("api" :: "flights" :: airportcode :: year :: Nil, _, _) => {
  	      val airport = Airport.findByCode(airportcode)
  	      airport match {
  	        case Full(airport) => {
@@ -79,7 +79,7 @@ object FlightResource extends RESTResource{
  	        case _ => Full(NotFoundResponse())
  	      }
  	    }
- 	    case req@Req("api" :: "flight" :: airportcode :: Nil, _, _) => {
+ 	    case req@Req("api" :: "flights" :: airportcode :: Nil, _, _) => {
  	      val airport = Airport.findByCode(airportcode)
  	      airport match {
  	        case Full(airport) => {
@@ -92,7 +92,7 @@ object FlightResource extends RESTResource{
  	        case _ => Full(NotFoundResponse())
  	      }
  	    }
- 	    case req@Req("api" :: "flight" :: Nil, _, _) => Full(NotFoundResponse())
+ 	    case req@Req("api" :: "flights" :: Nil, _, _) => Full(NotFoundResponse())
       case _ => Full(NotFoundResponse()) 
  	  }
     }

@@ -1,22 +1,6 @@
 <lift:surround with="default" at="content">
     <table>
-      <tr>
-        <!--<td>Id</td>-->
-        <td>Departure</td>
-        <td>Origin</td>
-        <td>Destination</td>
-        <td>Return Date</td>
-        <td>Price</td>
-      </tr>
-      <lift:FlightTable.roundtrip>
-        <tr>
-          <!--<td><flight:id /></td>-->
-          <td><flight:departure /></td>
-          <td><flight:origin/></td>
-          <td><flight:destination /></td>
-          <td><flight:returnDate /></td>
-          <td><flight:price /></td>
-        </tr>
+      <lift:FlightTable.roundtrip>      
       </lift:FlightTable.roundtrip>      
     </table>
 </lift:surround>
