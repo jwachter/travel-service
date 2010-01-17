@@ -13,6 +13,7 @@ import lufthansa._
 
 class FlightTable
 {
+  val separator = ';'
   val df = new SimpleDateFormat( "yyyy/mm/dd" )
   val lufthansa = new Lufthansa()
    
@@ -64,18 +65,19 @@ class FlightTable
         "destination" -> Text( i.destination.toString ),
         "price" -> Text( i.price.toString)
       )
-	)
+	  )
   }
   
   def multisegment( html : NodeSeq ) =
   {
-    println( S.request.open_!.headers.toString )
+    //println( S.request.open_!.headers.toString )
     
-	  val origins = S.request.open_!.params.get( "origins" ).get.head
-	  val destinations = S.request.open_!.params.get( "destinations" ).get.head
-	  val departures = S.request.open_!.params.get( "departures" ).get.head
+	  val origins = S.request.open_!.params.get( "origins" ).get.head.split( separator ).toList
+	  val destinations = S.request.open_!.params.get( "destinations" ).get.head.split( separator ).toList
+	  val departures = S.request.open_!.params.get( "departures" ).get.head.split( separator ).toList
 	  
-	  println( "DEBUG: " + origins + "\n" + destinations + "\n" + departures )
-	  Nil
+	  val param = origins.zip( destinations ).zip( departures ).map( ( e ) => ( e._1._1, e._1._2, e._2 ) )
+	  
+    val its = lufthansa.searchMultisegment( param )
   }
 }
