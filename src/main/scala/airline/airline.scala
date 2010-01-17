@@ -86,6 +86,8 @@ package airline {
         //val segments: Seq[Segment]
         //val price: Int    // amount of ticket fare + tax (e.g. dollars)
 
+        override def toString = "Itinerary [" + id + "] from " + origin + " to " + destination + " departure on: " + departureDate + " segments: " + segments.length + " duration: " + duration
+
         def toXML =
         <itinerary id={ id }>
             <origin>{ origin.code.name }</origin>
