@@ -34,58 +34,58 @@
   </form>
   
   <h3>Search roundtrip</h3>
-  <lift:SearchHelper.searchRoundtrip form="post">
+  <form method="POST" action="roundtripResult.html"> 
     <table>
       <tr>
         <td>From:</td>
-        <td><query:from /></td>
+        <td><input type="text" name="from" /></td>
       </tr>
       <tr>
         <td>To:</td>
-        <td><query:to /></td>
+        <td><input type="text" name="to" /></td>
       </tr>
       <tr>
         <td>Departure:</td>
         <td>
-          <query:departure />
+          <input type="text" name="departure" class="datepicker"/>
         </td>
       </tr>
       <tr>
         <td>Return date:</td>
         <td>
-          <query:returnDate />
+          <input type="text" name="returnDate" class="datepicker"/>
         </td>
       </tr>
       <tr>
         <td>&nbsp;</td>
-        <td><query:submit /></td>
+        <td><input type="submit" value="search" /></td>
       </tr>
     </table>
-  </lift:SearchHelper.searchRoundtrip>
-  
-  <h3>Search multi segment</h3>
-  <lift:SearchHelper.searchMultiSegment form="post">
+  </form>
+    
+  <!--<h3>Search multi segment</h3>
+  <form method="POST" action="multiSegmentResult.html"> 
     <table>
       <tr>
         <td>From:</td>
-        <td><query:from /></td>
+        <td><input type="text" name="from" /></td>
       </tr>
       <tr>
         <td>To:</td>
-        <td><query:to /></td>
+        <td><input type="text" name="to" /></td>
       </tr>
       <tr>
         <td>Departure:</td>
         <td>
-          <query:departure />
+          <input type="text" name="departure" class="datepicker"/>
         </td>
       </tr>
       <tr>
         <td>&nbsp;</td>
-        <td><query:submit /></td>
+        <td><input type="submit" value="search" /></td>
       </tr>
     </table>
-  </lift:SearchHelper.searchMultiSegment>
+  </form>-->
   
   <script type="text/javascript">
     $(function() {
