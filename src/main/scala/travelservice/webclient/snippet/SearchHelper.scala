@@ -28,22 +28,20 @@ class SearchHelper {
 	  	  
 	  def addParamsAndSend()
 	  {
-	    //println( "DEBUG:\n" + origins + "\n" + destinations + "\n" + departures )
-	    S.setHeader( "origins", from )
-	    S.setHeader( "destinations", to )
-	    S.setHeader( "departures", departure )
-	    S.redirectTo( "multiSegmentResult.html" )
+      storeToLists()
+	    S.redirectTo(
+	      "multiSegmentResult.html?origins="
+	    + origins.mkString( separator )
+	    + "&destinations=" + destinations.mkString( separator )
+	    + "&departures=" + departures.mkString( separator)
+	    )
 	  }
 	  	  
     def storeToLists() : JsCmd =
     {
-      //origins      = from      :: origins
-      //destinations = to        :: destinations
-      //departures   = departure :: departures
-      println( "origins: " + from )
-      S.setHeader( "origins", from )
-	    S.setHeader( "destinations", to )
-	    S.setHeader( "departures", departure )
+      origins      = from      :: origins
+      destinations = to        :: destinations
+      departures   = departure :: departures
       Noop
     }
 	 	  
