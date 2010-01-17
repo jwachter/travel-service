@@ -14,6 +14,7 @@ import lufthansa._
 
 class FlightTable
 {
+  val separator = ';'
   val df = new SimpleDateFormat( "yyyy/mm/dd" )
   val lufthansa = new Lufthansa()
    
@@ -43,18 +44,34 @@ class FlightTable
     
     val its = lufthansa.searchRoundtrip( oap.toAirport, dap.toAirport, departure, returnDate )
 
+<<<<<<< HEAD
     its.flatMap(i => ItineraryHelper.itineraryToXHTML(i))
+=======
+    its.flatMap(
+      i => bind(
+        "flight",
+        html,
+        //"id" -> Text( i.id ),
+        "departure" -> Text( i.departureDate.toString ),
+        "origin" -> Text( i.origin.toString ),
+        "returnDate" -> Text( ( new DateTime( i.departureDate ).plusMinutes( i.duration ) ).toString ),
+        "destination" -> Text( i.destination.toString ),
+        "price" -> Text( i.price.toString)
+      )
+	  )
+>>>>>>> f7fd37678429a3931e0f8d1dc77a2dc8b61682e2
   }
   
   def multisegment( html : NodeSeq ) =
   {
-    println( S.request.open_!.headers.toString )
+    //println( S.request.open_!.headers.toString )
     
-	  val origins = S.request.open_!.params.get( "origins" ).get.head
-	  val destinations = S.request.open_!.params.get( "destinations" ).get.head
-	  val departures = S.request.open_!.params.get( "departures" ).get.head
+	  val origins = S.request.open_!.params.get( "origins" ).get.head.split( separator ).toList
+	  val destinations = S.request.open_!.params.get( "destinations" ).get.head.split( separator ).toList
+	  val departures = S.request.open_!.params.get( "departures" ).get.head.split( separator ).toList
 	  
-	  println( "DEBUG: " + origins + "\n" + destinations + "\n" + departures )
-	  Nil
+	  val param = origins.zip( destinations ).zip( departures ).map( ( e ) => ( e._1._1, e._1._2, e._2 ) )
+	  
+    val its = lufthansa.searchMultisegment( param )
   }
 }
