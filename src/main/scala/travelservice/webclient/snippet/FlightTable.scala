@@ -11,23 +11,25 @@ import _root_.scala.xml._
 import travelservice.model._
 import travelservice.helper._
 import lufthansa._
+import _root_.org.joda.time._
+import _root_.org.joda.time.format._
 
 class FlightTable
 {
   val separator = ';'
-  val df = new SimpleDateFormat( "yyyy/mm/dd" )
+  val df = DateTimeFormat.forPattern("yyyy/MM/dd");
   val lufthansa = new Lufthansa()
    
   def oneway( html : NodeSeq ) =
   {
     val from = S.request.open_!.params.get( "from" ).get.head
     val to = S.request.open_!.params.get( "to" ).get.head
-    val departure = df.parse( S.request.open_!.params.get( "departure" ).get.head )
+    val departure = df.parseDateTime( S.request.open_!.params.get( "departure" ).get.head )
 
     val oap = Airport.findByCode( from ).open_!
     val dap = Airport.findByCode( to ).open_!
     
-    val its = lufthansa.searchOneway( oap.toAirport, dap.toAirport, departure )
+    val its = lufthansa.searchOneway( oap.toAirport, dap.toAirport, departure.toDate )
 
     its.flatMap(i => ItineraryHelper.itineraryToXHTML(i))
   }
@@ -36,8 +38,8 @@ class FlightTable
   {
     val from = S.request.open_!.params.get( "from" ).get.head
     val to = S.request.open_!.params.get( "to" ).get.head
-    val departure = df.parse( S.request.open_!.params.get( "departure" ).get.head )
-    val returnDate = df.parse( S.request.open_!.params.get( "returnDate" ).get.head )
+    val departure = df.parseDateTime( S.request.open_!.params.get( "departure" ).get.head ).toDate
+    val returnDate = df.parseDateTime( S.request.open_!.params.get( "returnDate" ).get.head ).toDate
 
     val oap = Airport.findByCode( from ).open_!
     val dap = Airport.findByCode( to ).open_!
@@ -55,9 +57,8 @@ class FlightTable
 	  val departures = S.request.open_!.params.get( "departures" ).get.head.split( separator ).toList.reverse
 	  
 	  val param = origins.zip( destinations ).zip( departures ).map( ( e ) => ( e._1._1, e._1._2, e._2 ) )
-	  
-   
-	  val real : Seq[(world.Airport, world.Airport, Date)] = param.map(e => (Airport.findByCode(e._1).open_!.toAirport, Airport.findByCode(e._2).open_!.toAirport, df.parse(e._3)))
+	     
+	  val real : Seq[(world.Airport, world.Airport, Date)] = param.map(e => (Airport.findByCode(e._1).open_!.toAirport, Airport.findByCode(e._2).open_!.toAirport, df.parseDateTime(e._3).toDate))
    
 	  println(real)
 	  
