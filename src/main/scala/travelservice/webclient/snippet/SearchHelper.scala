@@ -39,22 +39,10 @@ class SearchHelper {
 	  	  
     def storeToLists() : JsCmd =
     {
-<<<<<<< HEAD
-      //origins      = from      :: origins
-      //destinations = to        :: destinations
-      //departures   = departure :: departures
-      println( "origins: " + from )
-      println( "destinations: " + to )
-      println( "departures: " + departure )
-      S.setHeader( "origins", from )
-	    S.setHeader( "destinations", to )
-	    S.setHeader( "departures", departure )
-=======
-      origins      = from      :: origins
-      destinations = to        :: destinations
-      departures   = departure :: departures
->>>>>>> f7fd37678429a3931e0f8d1dc77a2dc8b61682e2
-      Noop
+    		origins      = from      :: origins
+    		destinations = to        :: destinations
+    		departures   = departure :: departures
+    		Noop
     }
     
     
