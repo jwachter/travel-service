@@ -25,31 +25,33 @@ import _root_.net.liftweb.json.JsonAST._
  * Companion object for the City mapper, just defines the table name
  */
 object City extends City with LongKeyedMetaMapper[City] {
-	override def dbTableName = "cities"
+    override def dbTableName = "cities"
+
+    def findByName(name:String) = City.find(By(City.name, name))
 }
 
 /*
  * Represents a City in the database. A City is described by Name and Country
  */
 class City extends LongKeyedMapper[City] with IdPK {
-  // Define companion
-  def getSingleton = City
+    // Define companion
+    def getSingleton = City
   
-  // The city name
-  object name extends MappedString(this, 100)
-  // The city's country
-  object country extends MappedString(this, 100)
+    // The city name
+    object name extends MappedString(this, 100)
+    // The city's country
+    object country extends MappedString(this, 100)
   
-  // Transform object to XML
-  def toXML = <city>{ name.is + ", " + country.is }</city>
+    // Transform object to XML
+    def toXML = <city>{ name.is + ", " + country.is }</city>
   
-  // Transform object to JSON
-  def toJSON = JObject(List(JField("name",JString(this.name.is)),JField("country",JString(this.country.is))))
+    // Transform object to JSON
+    def toJSON = JObject(List(JField("name",JString(this.name.is)),JField("country",JString(this.country.is))))
   
-  // Transform city to interface type
-  def toCity = new world.City(this.name.is, this.country.is)
+    // Transform city to interface type
+    def toCity = new world.City(this.name.is, this.country.is)
   
-  // Transform object to readable string
-  override def toString = this.name.is + ", " + this.country.is
+    // Transform object to readable string
+    override def toString = this.name.is + ", " + this.country.is
 
 }

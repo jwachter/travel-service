@@ -32,8 +32,48 @@ package lufthansa {
             )
         }
 
+        override def searchOneway (origin: world.Place, destination: world.Place, date:Date) : Seq[Itinerary] = {
+
+            //            val origin = world.Frankfurt
+            //          val destination = world.Toronto
+            
+            val origins = new ListBuffer [world.Airport] ()
+            val destinations = new ListBuffer [world.Airport] ()
+
+            origin match {
+                case a : world.Airport => origins.append(a)
+                case c : world.City =>                    
+                    val city = City.findByName(c.name)
+                
+                    for (ap <- Airport.findByCity(city.open_!)) {
+                        origins.append(ap.toAirport)
+                    }
+            }
+
+            destination match {
+                case a : world.Airport => destinations.append(a)
+                case c : world.City =>
+                    val city = City.findByName(c.name)
+
+                    for (ap <- Airport.findByCity(city.open_!)) {
+                        destinations.append(ap.toAirport)
+                    }
+            }
+
+            val _origins = origins.toList
+            val _destinations = destinations.toList
+
+            val routesToCheck = _origins.flatMap(
+                x => _destinations.map (
+                    y => (x, y, date)
+                )
+            )
+
+            routesToCheck flatMap ( route => searchOneway_ (route._1, route._2, route._3))
+        }
+
         // Search one way flights between two different Airports on a specific date.
-        override def searchOneway(origin: world.Airport, destination:world.Airport, date: Date): Seq[Itinerary] = {
+        def searchOneway_(origin: world.Airport, destination: world.Airport, date: Date): Seq[Itinerary] = {
 
             def getFlightsTo (flights : List[Flight], visited: List[Airport], destination: Airport, maxHops: Int, maxReachDestinationDate : Date) : List[List[Flight]] = {
             	// Get all flights that are possible after having taken the given flight en route to the destination whereas some Airports
@@ -108,7 +148,7 @@ package lufthansa {
 
         // Get all Itineraries that let you travel from one Airport to another and back again on two specific dates
         // TODO implement using searchOneway
-        override def searchRoundtrip(origin: world.Airport, destination: world.Airport, departureDate: Date, returnDate: Date): Seq[Itinerary] = {
+        override def searchRoundtrip(origin: world.Place, destination: world.Place, departureDate: Date, returnDate: Date): Seq[Itinerary] = {
             
             // this is just a special case of searchMultisegment
             searchMultisegment (List((origin, destination, departureDate), (destination, origin, returnDate)))
@@ -135,7 +175,7 @@ package lufthansa {
         // still the most time consuming thing will be the combinatorial explosion if there are lots of itineraries found
         // for the single trips
         //TODO: Check if the single destination/departure airport map between the segments
-        override def searchMultisegment(trips: Seq[(world.Airport, world.Airport, Date)]): Seq[Itinerary] = {
+        override def searchMultisegment(trips: Seq[(world.Place, world.Place, Date)]): Seq[Itinerary] = {
 
             def combineItineraries (flights : List[List[Itinerary]]) : List[List[Itinerary]] = flights match {
 

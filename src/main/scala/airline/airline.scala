@@ -104,7 +104,7 @@ package airline {
 
 
     trait Airline {
-        def searchOneway(origin: Airport, destination: Airport, date: Date): Seq[Itinerary] = {
+        def searchOneway(origin: Place, destination: Place, date: Date): Seq[Itinerary] = {
             /*
              // pre-condition
              val now = new Date
@@ -125,7 +125,7 @@ package airline {
         }
 
 
-        def searchRoundtrip(origin: Airport, destination: Airport, departureDate: Date, returnDate: Date): Seq[Itinerary] = {
+        def searchRoundtrip(origin: Place, destination:Place, departureDate: Date, returnDate: Date): Seq[Itinerary] = {
             /*
              // pre-condition
              now = new Date
@@ -157,7 +157,7 @@ package airline {
         }
 
 
-        def searchMultisegment(trips: Seq[(Airport, Airport, Date)]): Seq[Itinerary] = {
+        def searchMultisegment(trips: Seq[(Place,Place, Date)]): Seq[Itinerary] = {
             /*
              // pre-condition
              assert( trips.length > 1 ) // otherwise use searchOneway instead
