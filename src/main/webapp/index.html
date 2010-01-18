@@ -8,7 +8,6 @@
   
 	<h2>Lufthansa travel service</h2>
 	<!--<lift:FlightHelper.showCount />-->
-  Provide airport codes for origin and departure!
 	<h3>Search one way</h3>
 	<form method="POST" action="oneWayResult.html"> 
     <table>
@@ -64,29 +63,18 @@
   </form>
 
   <h3>Search multi segment</h3>
-  Currently not working!
-  <table>
-    <lift:SearchHelper.searchMultisegment form="post">
-      <tr>
-        <td>From:</td>
-        <td><query:from /></td>
-      </tr>
-      <tr>
-        <td>To:</td>
-        <td><query:to /></td>
-      </tr>
-      <tr>
-        <td>Departure:</td>
-        <td>
-          <query:departure />
-        </td>
-      </tr>
-      <tr>
-        <td><query:addSeg /></td>
-        <td><query:sendQuery /></td>
-      </tr>
-    </lift:SearchHelper.searchMultisegment>
-  </table>
+  <lift:SearchHelper.searchMultisegment form="post">
+    <table width="100%" border="1px" id="multisegment">
+      <tr><td>From:</td><td>To:</td><td>Departure:</td></tr>
+      <tr><td><query:from /></td><td><query:to /></td><td><query:departure /></td></tr>
+      <tr><td><query:addSeg /></td><td colspan="2"><query:sendQuery /></td></tr>
+
+
+      <tr><td colspan="3">Current segments:</td></tr>
+      <tr><td><query:segFrom /></td><td><query:segTo /></td><td><query:segDepartures /></td></tr>
+    </table>
+  </lift:SearchHelper.searchMultisegment>
+
 
   <script type="text/javascript">
     $(function() {
