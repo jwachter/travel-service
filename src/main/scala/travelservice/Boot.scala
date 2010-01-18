@@ -17,6 +17,7 @@ package travelservice
 
 import _root_.net.liftweb.util._
 import _root_.net.liftweb.http._
+import _root_.net.liftweb.common._
 import _root_.net.liftweb.mapper._
 import _root_.net.liftweb.sitemap._
 import _root_.net.liftweb.sitemap.Loc._
@@ -38,7 +39,7 @@ class Boot extends Bootable{
     // Prepare the database connection when JDBC is available
     if (!DB.jndiJdbcConnAvailable_?)
       DB.defineConnectionManager(DefaultConnectionIdentifier, DBVendor)
-    
+
     LiftRules.dispatch.prepend(SearchResource.dispatch)
     LiftRules.dispatch.prepend(CityResource.dispatch)
     LiftRules.dispatch.prepend(AirportResource.dispatch)
@@ -49,11 +50,11 @@ class Boot extends Bootable{
     
     // Prevent bugs while database schema is not stable, start from blank!
       
-    //Schemifier.destroyTables_!!(Log.infoF _, Airport, City, Flight)
+    Schemifier.destroyTables_!!(Log.infoF _, Airport, City, Flight)
     
-    //Schemifier.schemify(true, Log.infoF _, Airport, City, Flight)
+    Schemifier.schemify(true, Log.infoF _, Airport, City, Flight)
     
-    //initialize()
+    initialize()
   }
   
   def initialize() {

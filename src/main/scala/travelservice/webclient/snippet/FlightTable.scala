@@ -31,6 +31,7 @@ class FlightTable
     val dap = Airport.findByCode( to )
     
     var its = (oap, dap) match {
+	    case (Full(orig), Full(dest)) => lufthansa.searchOneway(orig.toAirport, dest.toAirport, departure.toDate)      
       case (Empty, Full(dest)) => lufthansa.searchOneway( City.findByName(from).open_!.toCity, dest.toAirport, departure.toDate) 
       case (Full(orig), Empty) => lufthansa.searchOneway( orig.toAirport, City.findByName(to).open_!.toCity, departure.toDate)
       case (_, _) => lufthansa.searchOneway( City.findByName(from).open_!.toCity, City.findByName(to).open_!.toCity, departure.toDate)
@@ -51,6 +52,7 @@ class FlightTable
     val dap = Airport.findByCode( to )
 
     var its = (oap, dap) match {
+	  case (Full(orig), Full(dest)) => lufthansa.searchRoundtrip(orig.toAirport, dest.toAirport, departure, returnDate)      
       case (Empty, Full(dest)) => lufthansa.searchRoundtrip( City.findByName(from).open_!.toCity, dest.toAirport, departure, returnDate ) 
       case (Full(orig), Empty) => lufthansa.searchRoundtrip( orig.toAirport, City.findByName(to).open_!.toCity, departure, returnDate )
       case (_, _) => lufthansa.searchRoundtrip( City.findByName(from).open_!.toCity, City.findByName(to).open_!.toCity, departure, returnDate )

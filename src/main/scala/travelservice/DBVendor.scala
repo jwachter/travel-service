@@ -13,11 +13,11 @@ object DBVendor extends ConnectionManager {
   private val maxPoolSize = 4
 
   private def createOne: Box[Connection] = try {
-    val driverName: String = Props.get("db.driver") openOr
-    "org.apache.derby.jdbc.EmbeddedDriver"
+    val driverName: String = Props.get("db.driver") openOr "org.h2.Driver"
+    //"org.apache.derby.jdbc.EmbeddedDriver"
 
-    val dbUrl: String = Props.get("db.url") openOr
-    "jdbc:derby:travel-service-dev;create=true"
+    val dbUrl: String = Props.get("db.url") openOr "jdbc:h2:mem:travel-service-dev;DB_CLOSE_DELAY=-1"
+    //"jdbc:derby:travel-service-dev;create=true"
 
     Class.forName(driverName)
 
