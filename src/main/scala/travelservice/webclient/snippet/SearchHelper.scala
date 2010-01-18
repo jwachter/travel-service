@@ -16,16 +16,16 @@ class SearchHelper {
   val df = new SimpleDateFormat( "yyyy/mm/dd" )
   val separator = ";"
   
-	def searchMultisegment( html : NodeSeq ) =
+	var from      = ""
+  var to        = ""
+  var departure = ""
+  
+  var origins      : List[String] = Nil
+  var destinations : List[String] = Nil
+  var departures   : List[String] = Nil
+  
+	def searchMultisegment( html : NodeSeq ) : NodeSeq =
 	{
-	  var from      = ""
-	  var to        = ""
-	  var departure = ""
-	  
-	  var origins      : List[String] = Nil
-	  var destinations : List[String] = Nil
-	  var departures   : List[String] = Nil
-	  	  
 	  def addParamsAndSend()
 	  {
       storeToLists()
@@ -42,19 +42,37 @@ class SearchHelper {
     		origins      = from      :: origins
     		destinations = to        :: destinations
     		departures   = departure :: departures
-    		Noop
+    		SetHtml( "multisegment", searchMultisegment( html ) )
     }
     
+    def updateList( html : NodeSeq) : NodeSeq =
+    {
+      println( origins.mkString( "\n" ) )
+      println( destinations.mkString( "\n" ) )
+      println( departures.mkString( "\n" ) )
+      
+      bind(
+        "query",
+        html,
+	      "segFrom"       -> <b>Test</b>,//Text( origins.mkString( "\n" ) ),
+	      "segTo"         -> <b>Test</b>,//Text( destinations.mkString( "\n" ) ),
+  	    "segDepartures" -> <b>Test</b>//Text( departures.mkString( "\n" ) )
+      )
+    }
     
-	 	  
+//    def reDraw() = SetHtml( "results", updateResultTable() )
+    
 	  bind(
 	    "query",
 	    html,
-	    "from"      -> SHtml.ajaxText( from, ( s ) => { from = s; Noop; }  ),
-	    "to"        -> SHtml.ajaxText( to, ( t ) => { to = t; Noop; }  ),
-	    "departure" -> SHtml.ajaxText( departure, ( d ) => { departure = d; Noop; }/*, ("class", "datepicker")*/ ),
-	    "addSeg"    -> SHtml.ajaxButton( "add segment", () => storeToLists() ),
-	    "sendQuery" -> submit( "search", () => addParamsAndSend() )
+	    "from"          -> SHtml.ajaxText( from, ( s ) => { from = s; Noop; }  ),
+	    "to"            -> SHtml.ajaxText( to, ( t ) => { to = t; Noop; }  ),
+	    "departure"     -> SHtml.ajaxText( departure, ( d ) => { departure = d; Noop; }/*, ("class", "datepicker")*/ ),
+	    "addSeg"        -> SHtml.ajaxButton( "add segment", () => storeToLists() ),
+	    "sendQuery"     -> submit( "search", () => addParamsAndSend() ),
+	    "segFrom"       -> Text( origins.mkString( "\n" ) ),
+	    "segTo"         -> Text( destinations.mkString( "\n" ) ),
+	    "segDepartures" -> Text( departures.mkString( "\n" ) )
 	  )
 	}
 }

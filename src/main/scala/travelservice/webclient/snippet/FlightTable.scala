@@ -88,7 +88,7 @@ class FlightTable
 	  val real : Seq[(world.Airport, world.Airport, Date)] = param.map(e => (Airport.findByCode(e._1).open_!.toAirport, Airport.findByCode(e._2).open_!.toAirport, df.parseDateTime(e._3).toDate))
    
     val its = lufthansa.searchMultisegment(real)
-    
+
     its.flatMap(i => ItineraryHelper.itineraryToXHTML(i))
   }
 }
