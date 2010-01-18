@@ -42,7 +42,7 @@ class Boot extends Bootable{
     LiftRules.dispatch.prepend(SearchResource.dispatch)
     LiftRules.dispatch.prepend(CityResource.dispatch)
     LiftRules.dispatch.prepend(AirportResource.dispatch)
-    LiftRules.dispatch.prepend(FlightResource.dispatch)
+    LiftRules.dispatch.prepend(FlightsResource.dispatch)
 
     // Create or update the Schema information for the model classes
     // Remove comments for 1 run to initialize the database

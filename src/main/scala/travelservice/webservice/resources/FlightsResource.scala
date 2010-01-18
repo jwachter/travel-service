@@ -6,11 +6,14 @@ import _root_.net.liftweb.json.JsonAST._
 import _root_.net.liftweb.http._
 import _root_.org.joda.time.{DateTime, DateMidnight}
 import _root_.java.util.Date
+import _root_.scala.xml.PrettyPrinter
 
 import travelservice.model._
 import travelservice.webservice.rest._
 
 object FlightsResource extends RESTResource{
+  
+	private val xmlPrinter = new PrettyPrinter(110,2)
 	
 	override val dispatch : LiftRules.DispatchPF = {
 	  case r@Req("api" :: "flights" :: _, _, GetRequest) => () => process(r)
@@ -30,7 +33,7 @@ object FlightsResource extends RESTResource{
 	 	      val from : DateTime = new DateTime(year.toInt, month.toInt, day.toInt, hour.toInt, 0, 0, 0); 
 	 	      val result = airport.findFlightsInDateRange(from.toDate, new DateMidnight(from.plusDays(1)).toDate)
 	 	      ct match {
-	 	    	case "json" => Full(JSONResponse(Printer.compact(JsonAST.render(JArray(result.map(it => it.toJSON))))))
+	 	    	case "json" => Full(JSONResponse(Printer.pretty(JsonAST.render(JArray(result.map(it => it.toJSON))))))
 	 	    	case "xml" => Full(XmlResponse(<flights>{result.map(it => it.toXML)}</flights>))
 	 	      }
 	        }
@@ -44,7 +47,7 @@ object FlightsResource extends RESTResource{
 	 	      val from : DateTime = new DateTime(year.toInt, month.toInt, day.toInt, 0, 0, 0, 0); 
 	 	      val result = airport.findFlightsInDateRange(from.toDate, new DateMidnight(from.plusDays(1)).toDate)
 	 	      ct match {
-	 	    	case "json" => Full(JSONResponse(Printer.compact(JsonAST.render(JArray(result.map(it => it.toJSON))))))
+	 	    	case "json" => Full(JSONResponse(Printer.pretty(JsonAST.render(JArray(result.map(it => it.toJSON))))))
 	 	    	case "xml" => Full(XmlResponse(<flights>{result.map(it => it.toXML)}</flights>))
 	 	      }
 	        }
@@ -58,8 +61,8 @@ object FlightsResource extends RESTResource{
 	 	      val from = new DateTime(year.toInt, month.toInt, 1, 0, 0, 0, 0); 
 	 	      val result = airport.findFlightsInDateRange(from.toDate, new DateMidnight(from.plusMonths(1)).toDate)
 	 	      ct match {
-	 	    	case "json" => println("Phase 3a");Full(JSONResponse(Printer.compact(JsonAST.render(JArray(result.map(it => it.toJSON))))))
-	 	    	case "xml" => println("Phase 3b");Full(XmlResponse(<flights>{result.map(it => it.toXML)}</flights>))
+	 	    	case "json" => Full(JSONResponse(Printer.pretty(JsonAST.render(JArray(result.map(it => it.toJSON))))))
+	 	    	case "xml" => Full(XmlResponse(<flights>{result.map(it => it.toXML)}</flights>))
 	 	      }
 	        }
  	        case _ => Full(NotFoundResponse())
@@ -72,7 +75,7 @@ object FlightsResource extends RESTResource{
 	 	      val from : DateTime = new DateTime(year.toInt, 1, 1, 0, 0, 0, 0); 
 	 	      val result = airport.findFlightsInDateRange(from.toDate, new DateMidnight(from.plusYears(1)).toDate)
 	 	      ct match {
-	 	    	case "json" => Full(JSONResponse(Printer.compact(JsonAST.render(JArray(result.map(it => it.toJSON))))))
+	 	    	case "json" => Full(JSONResponse(Printer.pretty(JsonAST.render(JArray(result.map(it => it.toJSON))))))
 	 	    	case "xml" => Full(XmlResponse(<flights>{result.map(it => it.toXML)}</flights>))
 	 	      }
 	        }
@@ -85,7 +88,7 @@ object FlightsResource extends RESTResource{
  	        case Full(airport) => {
 	 	      val result = airport.findFlights
 	 	      ct match {
-	 	    	case "json" => Full(JSONResponse(Printer.compact(JsonAST.render(JArray(result.map(it => it.toJSON))))))
+	 	    	case "json" => Full(JSONResponse(Printer.pretty(JsonAST.render(JArray(result.map(it => it.toJSON))))))
 	 	    	case "xml" => Full(XmlResponse(<flights>{result.map(it => it.toXML)}</flights>))
 	 	      }
 	        }

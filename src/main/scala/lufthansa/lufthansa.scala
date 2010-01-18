@@ -15,7 +15,7 @@ package lufthansa {
     	
     	// transfrom our search result to the interface types 
         private def toSingleSegmentItineraries (flightSeqs : List[List[Flight]], origin: world.Airport, destination: world.Airport) : List[Itinerary] = {
-            flightSeqs.map ( flightseq => {
+            val temp = flightSeqs.map ( flightseq => {
 
                     // create List of hops
                     val hops = for (flight <- flightseq) yield flight.toHop
@@ -30,6 +30,7 @@ package lufthansa {
                     new Itinerary ("newIt", seg.departureDate, seg.duration, origin, destination, seg :: Nil, 100)
                 }
             )
+            temp.sort((e1,e2) => e1.duration < e2.duration)
         }
 
         override def searchOneway (origin: world.Place, destination: world.Place, date:Date) : Seq[Itinerary] = {

@@ -52,7 +52,7 @@ class SearchHelper {
 	    html,
 	    "from"      -> SHtml.ajaxText( from, ( s ) => { from = s; Noop; }  ),
 	    "to"        -> SHtml.ajaxText( to, ( t ) => { to = t; Noop; }  ),
-	    "departure" -> SHtml.ajaxText( departure, ( d ) => { departure = d; Noop; } ),
+	    "departure" -> SHtml.ajaxText( departure, ( d ) => { departure = d; Noop; }/*, ("class", "datepicker")*/ ),
 	    "addSeg"    -> SHtml.ajaxButton( "add segment", () => storeToLists() ),
 	    "sendQuery" -> submit( "search", () => addParamsAndSend() )
 	  )
