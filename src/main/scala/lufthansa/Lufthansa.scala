@@ -8,8 +8,6 @@ package lufthansa {
     import _root_.org.joda.time._
     import travelservice.model._
 
-    import scala.collection.mutable.ListBuffer
-
     // Implement our version of the Airline spec
     class Lufthansa extends Airline {
     	
@@ -30,46 +28,33 @@ package lufthansa {
                     new Itinerary ("newIt", seg.departureDate, seg.duration, origin, destination, seg :: Nil, 100)
                 }
             )
+            // sort by duration time
             temp.sort((e1,e2) => e1.duration < e2.duration)
         }
 
         override def searchOneway (origin: world.Place, destination: world.Place, date:Date) : Seq[Itinerary] = {
 
-            //            val origin = world.Frankfurt
-            //          val destination = world.Toronto
-            
-            val origins = new ListBuffer [world.Airport] ()
-            val destinations = new ListBuffer [world.Airport] ()
-
-            origin match {
-                case a : world.Airport => origins.append(a)
-                case c : world.City =>                    
-                    val city = City.findByName(c.name)
-                
-                    for (ap <- Airport.findByCity(city.open_!)) {
-                        origins.append(ap.toAirport)
-                    }
-            }
-
-            destination match {
-                case a : world.Airport => destinations.append(a)
+            def getAirports (place: world.Place) = place match {
+                case a : world.Airport => List(a)
                 case c : world.City =>
                     val city = City.findByName(c.name)
-
-                    for (ap <- Airport.findByCity(city.open_!)) {
-                        destinations.append(ap.toAirport)
-                    }
+                    for (ap <- Airport.findByCity(city.open_!)) yield ap.toAirport
             }
 
-            val _origins = origins.toList
-            val _destinations = destinations.toList
+            // convert origin city or airport into list of possible origin airports
+            val origins = getAirports (origin)
 
-            val routesToCheck = _origins.flatMap(
-                x => _destinations.map (
+            // convert destination city or airport into list of possible destination airports
+            val destinations = getAirports (destination)
+
+            // combine all origin and destination airports with the departure date into a list of routes to check
+            val routesToCheck = origins.flatMap(
+                x => destinations.map (
                     y => (x, y, date)
                 )
             )
 
+            // combine all searchOneWay_ results for each (origin, destination, date) tripe
             routesToCheck flatMap ( route => searchOneway_ (route._1, route._2, route._3))
         }
 
@@ -99,9 +84,9 @@ package lufthansa {
                                             val newStartDate = new DateTime(dep).plusHours (flight.duration)
 
                                             // Find all flights departing on the right time window
-                                            val flightsNew : List [Flight] = Flight.findInRangeAndOrigin( newStartDate.toDate, maxReachDestinationDate, flight.destination)
+                                            val flightsNew = Flight.findInRangeAndOrigin( newStartDate.toDate, maxReachDestinationDate, flight.destination)
 
-                                            // Find all connections to our target. Add the current airport to visited airports to avvoid circles. Add current flight in front of the rest of the journey generated
+                                            // Find all connections to our target. Add the current airport to visited airports to avoid circles. Add current flight in front of the rest of the journey generated
                                             getFlightsTo (flightsNew, flight.destination :: visited, destination, maxHops, maxReachDestinationDate) map ( flights => flight :: flights )
                                         }
 
@@ -116,7 +101,6 @@ package lufthansa {
 
                 // find list of flights to the destination airport (segments) for all flights starting at the origin airport
                 flights match {
-                    // Walk through the algorithm
                     case hd :: tl => getFlightsStartingWith (hd, visited, destination) ::: getFlightsTo (tl, visited, destination, maxHops, maxReachDestinationDate)
                     case _ => Nil
                 }
@@ -137,11 +121,8 @@ package lufthansa {
             // all flights starting at origin during the specified timerange
             val flights : List [Flight] = Flight.findByDaysAndOrigin(date, departureDayRange, _origin)
 
-            // list of visited airports
-            val visited = _origin :: Nil
-
             // get all flights to the destination airport
-            val possibleFlightLines : List[List[Flight]] = getFlightsTo (flights, visited, _destination, maxHops, new DateTime (date).plusDays (departureDayRange).toDate)
+            val possibleFlightLines : List[List[Flight]] = getFlightsTo (flights, List(_origin), _destination, maxHops, new DateTime (date).plusDays (departureDayRange).toDate)
 
             // return as itineraries
             toSingleSegmentItineraries (possibleFlightLines, origin, destination)
@@ -189,10 +170,8 @@ package lufthansa {
                 case Nil => List(Nil)
             }
 
-
             val allFlights : Seq[Seq[Itinerary]] = trips map (trip => searchOneway (trip._1, trip._2, trip._3))
-            val allFlightsList = allFlights.asInstanceOf[List[List[Itinerary]]]
-            val allFlightsCombined = combineItineraries (allFlightsList)
+            val allFlightsCombined = combineItineraries (allFlights.asInstanceOf[List[List[Itinerary]]])
 
             allFlightsCombined.map (it => combineItinerariesIntoOne (it))
         }
