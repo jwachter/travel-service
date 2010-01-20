@@ -9,6 +9,7 @@ import _root_.net.liftweb.http.SHtml._
 import _root_.net.liftweb.mapper._
 import _root_.net.liftweb.util.Helpers._
 import _root_.scala.xml._
+import _root_.scala.xml.NodeSeq._
 
 import travelservice.model._
 
@@ -33,36 +34,19 @@ class SearchHelper {
 	      "multiSegmentResult.html?origins="
 	    + origins.mkString( separator )
 	    + "&destinations=" + destinations.mkString( separator )
-	    + "&departures=" + departures.mkString( separator)
+	    + "&departures=" + departures.mkString( separator )
 	    )
 	  }
 	  	  
     def storeToLists() : JsCmd =
     {
-    		origins      = from      :: origins
-    		destinations = to        :: destinations
-    		departures   = departure :: departures
+    		origins      = origins ::: List( from )
+    		destinations = destinations ::: List( to )
+    		departures   = departures ::: List( departure )
     		SetHtml( "multisegment", searchMultisegment( html ) )
     }
     
-    def updateList( html : NodeSeq) : NodeSeq =
-    {
-      println( origins.mkString( "\n" ) )
-      println( destinations.mkString( "\n" ) )
-      println( departures.mkString( "\n" ) )
-      
-      bind(
-        "query",
-        html,
-	      "segFrom"       -> <b>Test</b>,//Text( origins.mkString( "\n" ) ),
-	      "segTo"         -> <b>Test</b>,//Text( destinations.mkString( "\n" ) ),
-  	    "segDepartures" -> <b>Test</b>//Text( departures.mkString( "\n" ) )
-      )
-    }
-    
-//    def reDraw() = SetHtml( "results", updateResultTable() )
-    
-	  bind(
+    bind(
 	    "query",
 	    html,
 	    "from"          -> SHtml.ajaxText( from, ( s ) => { from = s; Noop; }  ),
@@ -70,9 +54,9 @@ class SearchHelper {
 	    "departure"     -> SHtml.ajaxText( departure, ( d ) => { departure = d; Noop; }/*, ("class", "datepicker")*/ ),
 	    "addSeg"        -> SHtml.ajaxButton( "add segment", () => storeToLists() ),
 	    "sendQuery"     -> submit( "search", () => addParamsAndSend() ),
-	    "segFrom"       -> Text( origins.mkString( "\n" ) ),
-	    "segTo"         -> Text( destinations.mkString( "\n" ) ),
-	    "segDepartures" -> Text( departures.mkString( "\n" ) )
+	    "segFrom"       -> <ul type="none">{fromSeq( origins.flatMap( ( o ) => <li>{ o }</li> ) )}</ul>,
+	    "segTo"         -> <ul type="none">{fromSeq( destinations.flatMap( ( d ) => <li>{ d }</li> ) )}</ul>,
+	    "segDepartures" -> <ul type="none">{fromSeq( departures.flatMap( ( d ) => <li>{ d }</li> ) )}</ul>
 	  )
 	}
 }

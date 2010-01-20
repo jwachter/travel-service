@@ -64,18 +64,14 @@
 
   <h3>Search multi segment</h3>
   <lift:SearchHelper.searchMultisegment form="post">
-    <table width="100%" border="1px" id="multisegment">
+    <table width="70%" id="multisegment">
       <tr><td>From:</td><td>To:</td><td>Departure:</td></tr>
       <tr><td><query:from /></td><td><query:to /></td><td><query:departure /></td></tr>
       <tr><td><query:addSeg /></td><td colspan="2"><query:sendQuery /></td></tr>
-
-
       <tr><td colspan="3">Current segments:</td></tr>
       <tr><td><query:segFrom /></td><td><query:segTo /></td><td><query:segDepartures /></td></tr>
     </table>
   </lift:SearchHelper.searchMultisegment>
-
-
   <script type="text/javascript">
     $(function() {
       $('.datepicker').datepicker({dateFormat:'yy/mm/dd'});

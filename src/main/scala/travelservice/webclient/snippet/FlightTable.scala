@@ -77,11 +77,11 @@ class FlightTable
 	    }		  
 	  }
    
-	  val origins = S.request.open_!.params.get( "origins" ).get.head.split( separator ).toList.reverse
+	  val origins = S.request.open_!.params.get( "origins" ).get.head.split( separator ).toList
    
-	  val destinations = S.request.open_!.params.get( "destinations" ).get.head.split( separator ).toList.reverse
+	  val destinations = S.request.open_!.params.get( "destinations" ).get.head.split( separator ).toList
    
-	  val departures = S.request.open_!.params.get( "departures" ).get.head.split( separator ).toList.reverse
+	  val departures = S.request.open_!.params.get( "departures" ).get.head.split( separator ).toList
    
 	  val param = origins.zip( destinations ).zip( departures ).map( ( e ) => ( e._1._1, e._1._2, e._2 ) )
    
