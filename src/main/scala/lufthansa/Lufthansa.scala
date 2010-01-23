@@ -8,11 +8,99 @@ package lufthansa {
     import _root_.org.joda.time._
     import travelservice.model._
 
+    import scala.actors.Futures._
+    import scala.actors.Actor._
+    import scala.actors._
+
     // Implement our version of the Airline spec
     class Lufthansa extends Airline {
+
+        abstract trait Mapper {
+            def map (trips: Seq[(world.Place, world.Place, Date)]) : Seq[Seq[Itinerary]]
+        }
+
+        abstract trait Combiner {
+            def combine (its: List[List[Itinerary]]) : List[Itinerary]
+        }
+
+        object SequentialMapper extends Mapper {
+            def map (trips: Seq[(world.Place, world.Place, Date)]) = trips map (trip => searchOneway (trip._1, trip._2, trip._3))
+        }
+
+        object SequentialCombiner extends Combiner {
+            def combine (its: List[List[Itinerary]]) : List[Itinerary] = its.map (it => combineItinerariesIntoOne (it))
+        }
+
+        // The ParallelMapper object will distribute each request for a trip into an individual EventThread based on scalas Actors
+        // The Response of the SearchTrip message will be a list with all the itineraries the searchOneeway method found
+        object ParallelMapper extends Mapper {
+            case class SearchTrip (val trip : (world.Place, world.Place, Date))
+            case class SearchTripResponse (val flights:Seq[Itinerary])
+
+            // first map all single trips in a MultiSegment search into several actors awaiting a Future response containing SearchTripResponse
+            // Then map a second time to the flights
+            def map (trips: Seq[(world.Place, world.Place, Date)]) = trips.map ( singleTrip => {
+                    // create anonym actor to process SearchTrip in parallel
+                    actor {
+                        react {
+                            case SearchTrip(trip) => reply (SearchTripResponse(searchOneway (trip._1, trip._2, trip._3)));
+                        }
+                    } !! SearchTrip (singleTrip)
+
+                }).map (future => {
+                    val ft = future ().asInstanceOf[SearchTripResponse]
+                    ft.flights
+                }
+            )
+        }
+
+        // The ParallelCombiner object uses scalas Actors to distribute the combination of itineraries
+        // among multiple EventThreads. After the distribution the it will wait for the Futures to finish
+        // and combine the results of the CombineResponses
+        object ParallelCombiner extends Combiner {
+            case class Combine (val itineraries:List[List[Itinerary]])
+            case class CombineResponse (val it:List[Itinerary])
+            class ParallelChunk (val lst: List[List[Itinerary]])
+
+            def combine (its: List[List[Itinerary]]) : List[Itinerary] = {
+
+                def sliceList (lst : List[List[Itinerary]], sliceSize : Int) : List[ParallelChunk] = lst match {
+                    case Nil => Nil
+                    case _ => {
+                            val (slice, rest) = lst.splitAt (sliceSize)
+                            new ParallelChunk (slice) :: sliceList (rest, sliceSize)
+                        }
+                }
+
+                // divide the list in four equal parts (not too much overhead when distributing)
+                val sliceSize = (its.length / 4) + 1
+                val slicedList = sliceList (its, sliceSize)
+
+                // collect the futures in a list
+                val lstFutures : List[Future[Any]]= slicedList.map ( x =>
+                    actor {
+                        react {
+                            case Combine (combine) => reply (CombineResponse(combine.map (it => combineItinerariesIntoOne (it))));
+                        }
+                    } !! Combine (x.lst)
+                )
+                // wait for all futures to finish processing and flatMap the resulting lists
+                lstFutures.flatMap (future => {
+                        val ft = future ().asInstanceOf[CombineResponse]
+                        ft.it
+                    }
+                )
+            }
+        }
+
+        object StrategyDecision {
+            def getMapper (tripCount: Int) = if (tripCount < 2) SequentialMapper else ParallelMapper
+
+            def getCombiner (count:Int) = if (count < 2000000) SequentialCombiner else ParallelCombiner
+        }
     	
     	// transfrom our search result to the interface types 
-        private def toSingleSegmentItineraries (flightSeqs : List[List[Flight]], origin: world.Airport, destination: world.Airport) : List[Itinerary] = {
+        def toSingleSegmentItineraries (flightSeqs : List[List[Flight]], origin: world.Airport, destination: world.Airport) : List[Itinerary] = {
             val temp = flightSeqs.map ( flightseq => {
 
                     // create List of hops
@@ -129,14 +217,13 @@ package lufthansa {
         }
 
         // Get all Itineraries that let you travel from one Airport to another and back again on two specific dates
-        // TODO implement using searchOneway
         override def searchRoundtrip(origin: world.Place, destination: world.Place, departureDate: Date, returnDate: Date): Seq[Itinerary] = {
             
             // this is just a special case of searchMultisegment
             searchMultisegment (List((origin, destination, departureDate), (destination, origin, returnDate)))
         }
 
-        private def combineItinerariesIntoOne (itineraries : List[Itinerary]) : Itinerary = {
+        def combineItinerariesIntoOne (itineraries : List[Itinerary]) : Itinerary = {
 
             assert (itineraries != Nil)
 
@@ -152,15 +239,11 @@ package lufthansa {
             new Itinerary ("newIt", departureDate, sumOfSegmentDurations, origin, destination, allSegments, 100)
         }
 
-        // Get all Itineraries that let you travel between a sequence of airport pairs on specific dates
-        // DISCLAIMER: using searchOneway for this implementation might not be the best speed we can achieve
-        // still the most time consuming thing will be the combinatorial explosion if there are lots of itineraries found
-        // for the single trips
-        //TODO: Check if the single destination/departure airport map between the segments
+
+        // Get all Itineraries that let you travel between a sequence of airport pairs on specific dates       
         override def searchMultisegment(trips: Seq[(world.Place, world.Place, Date)]): Seq[Itinerary] = {
 
             def combineItineraries (flights : List[List[Itinerary]]) : List[List[Itinerary]] = flights match {
-
                 case hd :: tl => {
                         val lstTail = combineItineraries (tl)
 
@@ -170,10 +253,10 @@ package lufthansa {
                 case Nil => List(Nil)
             }
 
-            val allFlights : Seq[Seq[Itinerary]] = trips map (trip => searchOneway (trip._1, trip._2, trip._3))
+            val allFlights = StrategyDecision.getMapper(trips.length).map(trips)
             val allFlightsCombined = combineItineraries (allFlights.asInstanceOf[List[List[Itinerary]]])
 
-            allFlightsCombined.map (it => combineItinerariesIntoOne (it))
+            StrategyDecision.getCombiner(allFlightsCombined.length).combine(allFlightsCombined).take(50)
         }
 
     }
