@@ -16,7 +16,8 @@ import _root_.org.joda.time._
 import _root_.org.joda.time.format._
 
 /**
- * Author:  Johannes Potschies, jpotschies@googlemail.com
+ * Author:  Jeffrey Groneberg, Sergej Jakimcuk, Marcus Körner,
+ *          Johannes Potschies, Johannes Wachter
  * Date:    2010/01/21
  * Project: FPUS - Airline Reservation System
  *
