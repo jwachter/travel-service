@@ -18,6 +18,9 @@ package travelservice.model
 // Import needed Lift modules.
 import _root_.net.liftweb.mapper._
 
+// Import application modules.
+import travelservice.helper.DateTimeHelpers._
+
 //
 // Companion object for mapping purposes.
 //
@@ -64,10 +67,25 @@ class Ticket extends LongKeyedMapper[Ticket] with IdPK{
 	// Transform to XML
 	//
 	def toXML = {
-	  val tfs = TicketFlight.findAll(By(TicketFlight._ticket, this), OrderBy(TicketFlight.segmentNumber, Ascending), OrderBy(TicketFlight.positionNumber, Ascending))
-	  
-	  println(tfs)
-	  
-	  <ticket>test</ticket>
-    }
+    val allFlights = flights.get
+    var durationSum = 0
+
+    allFlights.foreach( ( f ) => durationSum = durationSum + f.duration.is )
+    // TODO: itinerary id?!
+	  <ticket id={ this.uid.is }>
+      <itinerary> 
+        <origin>{ allFlights.head.origin.code.is }</origin>
+		    <destination>{ allFlights.last.destination.code.is }</destination>
+        <departureDate>{ iso( allFlights.head.departure.is ) }</departureDate>
+        <duration>durationSum</duration>
+        <price>{ this.price.is }</price>
+        <segments>
+          { for ( flight <- allFlights ) yield flight.toXML }
+        </segments>
+      </itinerary>
+      <travelers>
+        { for ( traveler <- travelers.get ) yield traveler.toXML }
+      </travelers>
+	  </ticket>
+	}
 }

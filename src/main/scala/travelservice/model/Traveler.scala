@@ -18,6 +18,9 @@ package travelservice.model
 // Import needed Lift modules.
 import _root_.net.liftweb.mapper._
 
+// Import application modules.
+import travelservice.helper.DateTimeHelpers._
+
 //
 // Companion object for mapping purposes.
 //
@@ -85,7 +88,6 @@ class Traveler extends LongKeyedMapper[Traveler] with IdPK{
     	{firstName.is + middleName.is + lastName.is}
     </li>
   }
-  
   def toXML = 
     <traveler>
       <firstName>{ firstName.is }</firstName>
