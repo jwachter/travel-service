@@ -210,11 +210,9 @@ class Book {
 	    	    pn += 1
 	    		TicketFlight.create._flight(f.open_!)._ticket(ticket).segmentNumber(sn).positionNumber(pn).save
 	    	}
-	    	sn += 1
 	    })
+	    sn += 1
 	  })
-   
-	  println(ticket.toXML)
    
 	  // Return the Ticket
 	  ticket

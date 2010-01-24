@@ -103,14 +103,14 @@ class Traveler extends LongKeyedMapper[Traveler] with IdPK{
 
       def toXHTML = 
     	<tr>
-    <td>{ firstName.is }</td>
-    <td>{ middleName.is }</td>
-    <td>{ lastName.is }</td>
-    <td>{ gender.is } </td>
-    <td>{ birthday.is }</td>
-    <td>{ travelDocType.is }</td>
-    <td>{ travelDocNumber.is }</td>
-    <td>{ phone.is }</td>
-    <td>{ email.is }</td>
-    </tr>
+		    <td>{ firstName.is }</td>
+		    <td>{ middleName.is }</td>
+		    <td>{ lastName.is }</td>
+		    <td>{ gender.is } </td>
+		    <td>{ birthday.is }</td>
+		    <td>{ travelDocType.is }</td>
+		    <td>{ travelDocNumber.is }</td>
+		    <td>{ phone.is }</td>
+		    <td>{ email.is }</td>
+	    </tr>
 }
