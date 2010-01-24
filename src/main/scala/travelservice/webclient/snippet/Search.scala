@@ -104,7 +104,8 @@ class Search {
         	    case Full((p1, p2)) => {
         	      val its = lufthansa.searchOneway(p1, p2, date)
         	      ItineraryHolder.set(Full(its))
-        	      <table width="100%">{its.take(100).map(e => ItineraryHelper.itineraryToXHTML(e))}</table>
+        	   
+        	      <div>{its.take(100).map(e => ItineraryHelper.itineraryToXHTML(e))}</div>
                 }
         	    case _ => <p>An error occured while processing your search.</p>
         	  }
@@ -135,7 +136,8 @@ class Search {
         	    case Full((p1, p2)) => {
         	      val its = lufthansa.searchRoundtrip(p1, p2, start, back)
         	      ItineraryHolder.set(Full(its))
-        	      <ul>{its.take(100).map(e => ItineraryHelper.itineraryToXHTML(e))}</ul>
+               
+        	      <div>{its.take(100).map(e => ItineraryHelper.itineraryToXHTML(e))}</div>
                 }
         	    case _ => <p>An error occured while processing your search.</p>
         	  }
@@ -174,7 +176,7 @@ class Search {
 				      case _ => ItineraryHolder.set(Empty)
 				    }
 				
-				    <p>{its.take(100).flatMap( i => ItineraryHelper.itineraryToXHTML( i ) )}</p>
+				    <div>{its.take(100).flatMap( i => ItineraryHelper.itineraryToXHTML( i ) )}</div>
           } catch {
             case e:Exception => S.error("An error occured while searching. Please try again!"); <p>No results!</p>
           }

@@ -69,7 +69,6 @@ div.travelercontainer {
 div#searchresult {
 	margin: 0 auto;
 	width: 650px;
-	background-color:white;
 }
 
 div#lift__noticesContainer__ {
@@ -83,4 +82,11 @@ div#lift__noticesContainer___error {
 	color:white;
 	font-weight:bold;
 	background-color:red;
+}
+
+div.result {
+	background-color:white;
+}
+div.resultOdd {
+	background-color:#eee;
 }

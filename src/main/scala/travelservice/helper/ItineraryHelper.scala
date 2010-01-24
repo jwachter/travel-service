@@ -52,8 +52,10 @@ object ItineraryHelper {
 	//
 	def itineraryToXHTML(it:Itinerary):NodeSeq = {
 		val link = "/book/booking.html?id="+it.id	  
-	  
-        <tr id={it.id}>
+		
+		<div class="result">
+	    <table width="100%">
+        <tr style="background-color:#eee" id={it.id}>
           	<td><strong>{it.origin.code.name} to { it.destination.code.name }</strong></td>
             <td><a href={link}>Book this Trip</a></td>
             <td>{it.departureDate}</td>
@@ -73,6 +75,8 @@ object ItineraryHelper {
         &nbsp;
         </td>
         </tr>
+        </table>
+        </div>
     }
  
 	//

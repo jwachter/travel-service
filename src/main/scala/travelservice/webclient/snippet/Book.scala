@@ -174,14 +174,17 @@ class Book {
 	 	  // Link to the payment service.
 	 	  val link = "http://localhost:9090/pay.html?payee=lufthansa&item="+BookableItinerary.is.open_!.id
      
-	 			  // Clear cache
-	 			  IDHolder.set(Empty)
-	 			  ItineraryHolder.set(Empty)
-	 			  TravelerHolder.set(Nil)
-	 			  TicketHolder.set(null)
-	 			  BookableItinerary.set(Empty)
 	      // Return link.
-	 	  <a href={link}>Pay with EuroPay</a>
+	      val result = <p>You need to pay {BookableItinerary.is.open_!.price.toString}. Do it with EuroPay</p><br /><a href={link}>Pay with EuroPay</a>
+
+       // Clear cache
+	 	  IDHolder.set(Empty)
+	 	  ItineraryHolder.set(Empty)
+	 	  TravelerHolder.set(Nil)
+	 	  TicketHolder.set(null)
+	 	  BookableItinerary.set(Empty)
+     
+	 	  result
 	 	} else {
 	 	  // Return to adding travelers.
 	 	  S.error("You need at least one Traveler");S.redirectTo("/book/travelers.html")
