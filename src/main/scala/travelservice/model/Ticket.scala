@@ -56,6 +56,11 @@ class Ticket extends LongKeyedMapper[Ticket] with IdPK{
 	object travelers extends HasManyThrough(this, Traveler, TicketTraveler, TicketTraveler._ticket, TicketTraveler._traveler)
  
 	//
+	// Payment status should be set via service by payment gateway.
+	//
+	object paymentStatus extends MappedBoolean(this)
+ 
+	//
 	// Transform to XML
 	//
 	def toXML = {

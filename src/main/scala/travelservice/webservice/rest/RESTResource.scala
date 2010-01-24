@@ -1,5 +1,5 @@
 /**
- * Copyright 2010 Johannes Wachter
+ * Copyright 2010 Johannes Wachter, Marcus Körner, Johannes Potschies, Jeffrey Groneberg, Sergej Jakimcuk
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -15,35 +15,48 @@
  */
 package travelservice.webservice.rest
 
+// Lift modules.
 import _root_.net.liftweb.http._
 import _root_.net.liftweb.common._
 
-/*
- * Trait for simplifying the implementation of RESTful Resources
-*/
+//
+// Base trait for simple implementation of REST apis.
+//
 trait RESTResource {
-	// urls matching this resource
+	//
+	// Setup what urls match the service
+	//
 	val dispatch : LiftRules.DispatchPF
   
+	//
 	// Define the handle function for the different request types
+	//
 	val get : (Req, String) => Box[LiftResponse] = (r, c) => Full(MethodNotAllowedResponse())
     val put : (Req, String) => Box[LiftResponse] = (r, c) => Full(MethodNotAllowedResponse())
     val post : (Req, String) => Box[LiftResponse] = (r, c) => Full(MethodNotAllowedResponse())
     val delete : (Req, String) => Box[LiftResponse] = (r, c) => Full(MethodNotAllowedResponse())
 
+    //
     // The content types supported by this Resource
+    //
 	val supportedContentTypes:List[String]
  
+	//
+	// Determines the content type (XML or JSON) via several checks and preconditions.
+	//
 	private final def determineContentType(req:Req):Box[String]={
 	  req match {
 		// GetRequest: Context overrules Accept Header (if present)
 	    case r@Req(_,contentType,GetRequest) => decide(contentType, "Accept")
 	    case r@Req(_,contentType,DeleteRequest) => decide(contentType, "Accept")
 	    case r@Req(_,contentType,_) => decide(contentType, "Content-Type")
-	    case _ => Empty  
+	    case _ => Full("xml")  
 	  }   
 	}
  
+    //
+    // Final decider what the current content type is.
+    //
 	private final def decide(contentType:String, header:String):Box[String]={
 	  contentType match {
 	      case "json" => Full("json")
@@ -54,29 +67,34 @@ trait RESTResource {
 	        case Full("text/json") => Full("json")
 	        case Full("application/xml") => Full("xml")
 	        case Full("text/xml") => Full("xml")
-	        case _ => Empty
+	        case _ => Full("xml")
 	      }
 	    }
 	}
  
+    //
+    // Basic request handling calls the right method implementation and handles
+    // some errors early without the need to implement them again.
+    //
 	final def process(req:Req) : Box[LiftResponse] = {
 		try {
 			val requestType = req.requestType
 			val contentType = determineContentType(req)
-			if(!supportedContentTypes.contains(contentType.openOr("undefined")) || contentType.isEmpty)
-				Full(UnsupportedMediaTypeResponse())
-			else
+			if(contentType.open_! == "xml"){
 				// Dispatch dependent on request type
 				requestType match {
-				  case GetRequest => get(req, contentType.open_!)
-				  case PostRequest => post(req, contentType.open_!)
-				  case PutRequest => put(req, contentType.open_!)
-				  case DeleteRequest => delete(req, contentType.open_!)
-				  case _ => Full(MethodNotAllowedResponse())
+				case GetRequest => get(req, contentType.open_!)
+				case PostRequest => post(req, contentType.open_!)
+				case PutRequest => put(req, contentType.open_!)
+				case DeleteRequest => delete(req, contentType.open_!)
+				case _ => Full(MethodNotAllowedResponse())
 				}
+			} else {
+				Full(UnsupportedMediaTypeResponse())
+		    }
 		} catch {
-			case e:NoSuchElementException => Full(MethodNotAllowedResponse())
-			case e:Exception => Full(InternalServerErrorResponse())
+			case e:NoSuchElementException => e.printStackTrace; Full(MethodNotAllowedResponse())
+			case e:Exception => e.printStackTrace; Full(InternalServerErrorResponse())
 		}
 	}
 }

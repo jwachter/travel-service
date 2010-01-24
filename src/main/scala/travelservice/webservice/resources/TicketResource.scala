@@ -44,6 +44,9 @@ object TicketResource extends RESTResource{
 	  // Get value of the ticket
 	  case r@Req("api" :: "ticket" :: id :: "payment" :: Nil, _, GetRequest) => () => process(r)
 	  
+	  // Set payment succesful flag from PaymentGateway via service
+	  case r@Req("api" :: "ticket" :: id :: "payment" :: Nil, _, PutRequest) => () => process(r)
+	  
 	  // All other requests are not allowed on this Resource.
 	  case r@Req("api" :: "ticket" :: _, _, _) => () => Full(MethodNotAllowedResponse())
 	}
@@ -74,5 +77,27 @@ object TicketResource extends RESTResource{
 	     } 
 	     case _ => Full(BadResponse())
 	  }
+	  }
+ 
+	  //
+	  // React to PUT which indicates payment confirmation by a PaymentGateway
+	  //
+	  override val put = (r:Req, ct:String) => {
+	  r match {
+	     case  Req("api" :: "ticket" :: id ::"payment" :: Nil, _, PutRequest) => {
+			  val ticket = Ticket.find(By(Ticket.uid, id))
+			  ticket match {
+			    case Full(t) => try {
+			      t.paymentStatus(true);
+			      Full(OkResponse())
+			    } catch {
+			      case e:Exception => Full(InternalServerErrorResponse())
+			    }
+			    case _ => Full(NotFoundResponse())
+			  } 
+	     } 
+	     case _ => Full(BadResponse())
+	  }
+   
 	}
 }

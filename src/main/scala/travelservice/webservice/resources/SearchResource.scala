@@ -31,42 +31,52 @@ import _root_.java.util.Date
 
 // Import application classes.
 import travelservice.webservice.rest._
-import model._
+import travelservice.model._
+import travelservice.helper._
 
 //
 // This object provides the implementation of a restful resource to handle search service requests.
 //
-object SearchResource /*extends RESTResource*/{
+object SearchResource extends RESTResource{
 	
 	val df  = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm")
   
-	/*override*/ val dispatch : LiftRules.DispatchPF = {
-	  case r@Req("api" :: "search" :: _, _, GetRequest) => () => process(r)
+	override val dispatch : LiftRules.DispatchPF = {
 	  case r@Req("api" :: "search" :: _, _, PostRequest) => () => process(r)
-	  case r@Req("api" :: "search" :: _, _, PutRequest) => () => process(r)
-	  case r@Req("api" :: "search" :: _, _, DeleteRequest) => () => process(r)
+	  case r@Req("api" :: "search" :: _, _, _) => () => process(r)
 	}
  
- 	//override val supportedContentTypes = List("xml","json")
+ 	override val supportedContentTypes = List("xml")
   
- 	//override val post = (r:Req, ct:String) => {
-    def process(req:Req)={
- 	  val contents = req.xml.open_!
-    
- 	  val searchType = (contents \ "@type").text
- 	  
- 	  searchType match {
- 	    case "oneway" => handleOneWay(contents)
- 	    case "roundtrip" => handleRoundTrip(contents) 
- 	    //case "multisegment" => handleMultiSegment(contents)
+ 	override val post = (r:Req, ct:String) => {
+ 	  r match {
+ 	    case r@Req("api" :: "search" :: _, _, PostRequest) => {
+ 	      if(!r.xml.isEmpty){
+ 	    	handleSearch(r.xml.open_!)
+ 	      } else {
+ 	        Full(BadResponse())
+ 	      }
+ 	    }
+      case _ => Full(BadResponse())
  	  }
  	}
   
+ 	private def handleSearch(xml:NodeSeq):Box[LiftResponse]={
+ 	  val searchType = (xml \ "@type").text
+ 	  
+ 	  searchType match {
+ 	    case "oneway" => handleOneWay(xml)
+ 	    case "roundtrip" => handleRoundTrip(xml) 
+ 	    case "multisegment" => handleMultiSegment(xml)
+ 	  }
+ 	}  
+  
  	private def handleOneWay(contents:NodeSeq):Box[LiftResponse]={
- 		val origin = (contents \ "origin").text
- 		val destination = (contents \ "destination").text
- 		val departureDate = df.parseDateTime((contents \ "departureDate").text).toDate
- 		val found = airportOrCity(origin, destination)
+ 		val origin = (contents \\ "origin").text
+ 		val destination = (contents \\ "destination").text
+ 		val departureDate = df.parseDateTime((contents \\ "departureDate").text).toDate
+   
+ 		val found = AirportCityHelper.getPlaces(origin, destination).open_!
  		
  		val res = new lufthansa.Lufthansa().searchOneway(found._1, found._2, departureDate)
    
@@ -74,30 +84,32 @@ object SearchResource /*extends RESTResource*/{
  	}
   
  	private def handleRoundTrip(contents:NodeSeq):Box[LiftResponse]={
- 		val origin = (contents \ "origin").text
- 		val destination = (contents \ "destination").text
- 		val departureDate = df.parseDateTime((contents \ "departureDate").text).toDate
- 		val returnDate = df.parseDateTime((contents \ "returnDate").text).toDate
+ 		val origin = (contents \\ "origin").text
+ 		val destination = (contents \\ "destination").text
+ 		val departureDate = df.parseDateTime((contents \\ "departureDate").text).toDate
+ 		val returnDate = df.parseDateTime((contents \\ "returnDate").text).toDate
  		
- 		val found = airportOrCity(origin, destination)
+ 		val found = AirportCityHelper.getPlaces(origin, destination).open_!
    
  		val res = new lufthansa.Lufthansa().searchRoundtrip(found._1, found._2, departureDate, returnDate)
    
  		Full(XmlResponse(<itineraries>{res.map(e => e.toXML)}</itineraries>))
  	}
   
-  	  private def airportOrCity(id1:String, id2:String):(specification.Place, specification.Place) = {
-	    val oap = Airport.findByCode( id1 )
-	    val dap = Airport.findByCode( id2 )
-     
-	
-	    var its = Nil;
-	    
-	    (oap, dap) match {
-	    	case (Full(orig), Full(dest)) => (orig.toAirport, dest.toAirport) 
-	      case (Empty, Full(dest)) => (City.findByName(id1).open_!.toCity, dest.toAirport) 
-	      case (Full(orig), Empty) => (orig.toAirport, City.findByName(id2).open_!.toCity)
-	      case (_, _) => ( City.findByName(id1).open_!.toCity, City.findByName(id2).open_!.toCity)
-	    }		  
-	  }
+ 	private def handleMultiSegment(xml:NodeSeq)={
+ 	  val segments = xml \\ "segments" \ "segment"
+    
+ 	  val steps = segments.map(s => ((s \\ "origin").text,(s \\ "destination").text,(s \\ "departureDate").text))
+    
+ 	  var searchSegments : List[(specification.Place, specification.Place, Date)]= Nil
+ 	  for(step <- steps){
+ 	    val places = AirportCityHelper.getPlaces(step._1, step._2).open_!
+ 	    val date = df.parseDateTime(step._3).toDate
+ 	    
+ 	    searchSegments = (places._1, places._2, date) :: searchSegments
+ 	  }
+ 		val res = new lufthansa.Lufthansa().searchMultisegment(searchSegments.reverse)
+   
+ 		Full(XmlResponse(<itineraries>{res.map(e => e.toXML)}</itineraries>))
+ 	}     
 }

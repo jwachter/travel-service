@@ -95,8 +95,6 @@ class Search {
       val destination = S.param("to") 
       val departure = S.param("departure")
       
-      println("ONE"+origin+destination+departure)
-      
       (origin, destination, departure) match {
         case (Full(orig), Full(dest), Full(dept)) if !dept.isEmpty && !orig.isEmpty && !dest.isEmpty => {
           try {
@@ -127,8 +125,6 @@ class Search {
       val departure = S.param("departure")
       val returnDate = S.param("returnDate")
       
-      println("ROUND"+origin+destination+departure+returnDate)
-      
       (origin, destination, departure, returnDate) match {
         case (Full(orig), Full(dest), Full(dept), Full(ret)) if !dept.isEmpty && !orig.isEmpty && !dest.isEmpty && !ret.isEmpty => {
           try {
@@ -158,8 +154,6 @@ class Search {
    	  val origins = S.param("originSequence")
       val destinations = S.param("destinationSequence") 
       val departures = S.param("departureSequence")
-      
-      println("MULTI"+origins+destinations+departures)
       
       (origins, destinations, departures) match {
         case (Full(orig), Full(dest), Full(dept)) if !dept.isEmpty && !orig.isEmpty && !dest.isEmpty => {
