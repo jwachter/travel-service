@@ -6,7 +6,11 @@ package lufthansa {
     import _root_.net.liftweb.json.JsonAST._
     import _root_.org.joda.time._
     import travelservice.model._
-    import travelservice.helper.IdHelper
+    import travelservice.helper._
+
+    import scala.actors.Futures._
+    import scala.actors.Actor._
+    import scala.actors._
 
     // Implement our version of the Airline spec
     class Lufthansa extends specification.Airline {
@@ -17,9 +21,93 @@ package lufthansa {
             
             IdHelper.md5(combinedFlightNumbers+combinedFlightDates)
     	}
+
+        abstract trait Mapper {
+            def map (trips: Seq[(specification.Place, specification.Place, Date)]) : Seq[Seq[specification.Itinerary]]
+        }
+
+        abstract trait Combiner {
+            def combine (its: List[List[specification.Itinerary]]) : List[specification.Itinerary]
+        }
+
+        object SequentialMapper extends Mapper {
+            def map (trips: Seq[(specification.Place, specification.Place, Date)]) = trips map (trip => searchOneway (trip._1, trip._2, trip._3))
+        }
+
+        object SequentialCombiner extends Combiner {
+            def combine (its: List[List[specification.Itinerary]]) : List[specification.Itinerary] = its.map (it => combineItinerariesIntoOne (it))
+        }
+
+        // The ParallelMapper object will distribute each request for a trip into an individual EventThread based on scalas Actors
+        // The Response of the SearchTrip message will be a list with all the itineraries the searchOneeway method found
+        object ParallelMapper extends Mapper {
+            case class SearchTrip (val trip : (specification.Place, specification.Place, Date))
+            case class SearchTripResponse (val flights:Seq[specification.Itinerary])
+
+            // first map all single trips in a MultiSegment search into several actors awaiting a Future response containing SearchTripResponse
+            // Then map a second time to the flights
+            def map (trips: Seq[(specification.Place, specification.Place, Date)]) = trips.map ( singleTrip => {
+                    // create anonym actor to process SearchTrip in parallel
+                    actor {
+                        react {
+                            case SearchTrip(trip) => reply (SearchTripResponse(searchOneway (trip._1, trip._2, trip._3)));
+                        }
+                    } !! SearchTrip (singleTrip)
+
+                }).map (future => {
+                    val ft = future ().asInstanceOf[SearchTripResponse]
+                    ft.flights
+                }
+            )
+        }
+
+        // The ParallelCombiner object uses scalas Actors to distribute the combination of itineraries
+        // among multiple EventThreads. After the distribution the it will wait for the Futures to finish
+        // and combine the results of the CombineResponses
+        object ParallelCombiner extends Combiner {
+            case class Combine (val itineraries:List[List[specification.Itinerary]])
+            case class CombineResponse (val it:List[specification.Itinerary])
+            class ParallelChunk (val lst: List[List[specification.Itinerary]])
+
+            def combine (its: List[List[specification.Itinerary]]) : List[specification.Itinerary] = {
+
+                def sliceList (lst : List[List[specification.Itinerary]], sliceSize : Int) : List[ParallelChunk] = lst match {
+                    case Nil => Nil
+                    case _ => {
+                            val (slice, rest) = lst.splitAt (sliceSize)
+                            new ParallelChunk (slice) :: sliceList (rest, sliceSize)
+                        }
+                }
+
+                // divide the list in four equal parts (not too much overhead when distributing)
+                val sliceSize = (its.length / 4) + 1
+                val slicedList = sliceList (its, sliceSize)
+
+                // collect the futures in a list
+                val lstFutures : List[Future[Any]]= slicedList.map ( x =>
+                    actor {
+                        react {
+                            case Combine (combine) => reply (CombineResponse(combine.map (it => combineItinerariesIntoOne (it))));
+                        }
+                    } !! Combine (x.lst)
+                )
+                // wait for all futures to finish processing and flatMap the resulting lists
+                lstFutures.flatMap (future => {
+                        val ft = future ().asInstanceOf[CombineResponse]
+                        ft.it
+                    }
+                )
+            }
+        }
+
+        object StrategyDecision {
+            def getMapper (tripCount: Int) = if (tripCount < 2) SequentialMapper else ParallelMapper
+
+            def getCombiner (count:Int) = if (count < 2000000) SequentialCombiner else ParallelCombiner
+        }
     	
     	// transfrom our search result to the interface types 
-        private def toSingleSegmentItineraries (flightSeqs : List[List[Flight]], origin: specification.Airport, destination: specification.Airport) : List[specification.Itinerary] = {
+        def toSingleSegmentItineraries (flightSeqs : List[List[Flight]], origin: specification.Airport, destination: specification.Airport) : List[specification.Itinerary] = {
             val temp = flightSeqs.map ( flightseq => {
 
                     // create List of hops
@@ -31,10 +119,8 @@ package lufthansa {
 
                     // create segment for itinerary
                     val seg = new specification.Segment (origin, destination, hops.head.departureDate, sumOfDurations, hops)
-                    
-                    val uid = generateUniqueId(List(seg))
 
-                    new specification.Itinerary (uid, seg.departureDate, seg.duration, origin, destination, seg :: Nil, 100)
+                    new specification.Itinerary (generateUniqueId(List(seg)), seg.departureDate, seg.duration, origin, destination, seg :: Nil, 100)
                 }
             )
             // sort by duration time
@@ -55,7 +141,7 @@ package lufthansa {
 
             // convert destination city or airport into list of possible destination airports
             val destinations = getAirports (destination)
-            
+
             // combine all origin and destination airports with the departure date into a list of routes to check
             val routesToCheck = origins.flatMap(
                 x => destinations.map (
@@ -138,14 +224,13 @@ package lufthansa {
         }
 
         // Get all Itineraries that let you travel from one Airport to another and back again on two specific dates
-        // TODO implement using searchOneway
         override def searchRoundtrip(origin: specification.Place, destination: specification.Place, departureDate: Date, returnDate: Date): Seq[specification.Itinerary] = {
             
             // this is just a special case of searchMultisegment
             searchMultisegment (List((origin, destination, departureDate), (destination, origin, returnDate)))
         }
 
-        private def combineItinerariesIntoOne (itineraries : List[specification.Itinerary]) : specification.Itinerary = {
+        def combineItinerariesIntoOne (itineraries : List[specification.Itinerary]) : specification.Itinerary = {
 
             assert (itineraries != Nil)
 
@@ -157,21 +242,15 @@ package lufthansa {
 
             val allDurations : List[Int] = allSegments.map (seg => seg.duration)
             val sumOfSegmentDurations = allDurations.foldLeft (0)((a,b) => a+b)
-            
-            val uid = generateUniqueId(allSegments)
-            
-            new specification.Itinerary (uid, departureDate, sumOfSegmentDurations, origin, destination, allSegments, 100)
+
+            new specification.Itinerary (generateUniqueId(allSegments), departureDate, sumOfSegmentDurations, origin, destination, allSegments, 100)
         }
 
-        // Get all Itineraries that let you travel between a sequence of airport pairs on specific dates
-        // DISCLAIMER: using searchOneway for this implementation might not be the best speed we can achieve
-        // still the most time consuming thing will be the combinatorial explosion if there are lots of itineraries found
-        // for the single trips
-        //TODO: Check if the single destination/departure airport map between the segments
-        override def searchMultisegment(trips: Seq[(specification.Place, specification.Place, Date)]): Seq[specification.Itinerary] = {
-          
-            def combineItineraries (flights : List[List[specification.Itinerary]]) : List[List[specification.Itinerary]] = flights match {
 
+        // Get all Itineraries that let you travel between a sequence of airport pairs on specific dates       
+        override def searchMultisegment(trips: Seq[(specification.Place, specification.Place, Date)]): Seq[specification.Itinerary] = {
+
+            def combineItineraries (flights : List[List[specification.Itinerary]]) : List[List[specification.Itinerary]] = flights match {
                 case hd :: tl => {
                         val lstTail = combineItineraries (tl)
 
@@ -181,31 +260,11 @@ package lufthansa {
                 case Nil => List(Nil)
             }
 
-            val allFlights : Seq[Seq[specification.Itinerary]] = trips map (trip => searchOneway (trip._1, trip._2, trip._3))
-            
-            
+            val allFlights = StrategyDecision.getMapper(trips.length).map(trips)
             val allFlightsCombined = combineItineraries (allFlights.asInstanceOf[List[List[specification.Itinerary]]])
-            
-            allFlightsCombined.map (it => combineItinerariesIntoOne (it))
+
+            StrategyDecision.getCombiner(allFlightsCombined.length).combine(allFlightsCombined).take(50)
         }
 
-         override def book(itinerary: specification.Itinerary, travelers: Seq[specification.Traveler]): (specification.Ticket, specification.EuroPay) = {
-	    // pre-condition
-	    /*assert( itinerary is still available )    // don't worry about this if your implementation of airline does not check availablity
-	    assert( travelers.length > 0 )            // require at least one traveler
-	
-	    // internal processing to generate a ticket
-	    //val ticket  = ...
-	
-	    // Lufthansa always use EuroPay to collect payments
-	    //val euroPay = ...
-	
-	    // post-condition
-	    assert( ticket.itinerary == itinerary )
-	    assert( ticket.travelers == travelers )
-	*/
-    (null, null)
-  }
-        
     }
 }

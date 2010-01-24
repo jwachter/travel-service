@@ -89,8 +89,8 @@ trait Airline {
         Nil
     }
 
-
-	  def book(itinerary: specification.Itinerary, travelers: Seq[specification.Traveler]): (specification.Ticket, specification.PaymentGateway) = {
+   // TODO investigate!!!
+	  /*def book(itinerary: specification.Itinerary, travelers: Seq[specification.Traveler]): (specification.Ticket, specification.PaymentGateway) = {
 	    // pre-condition
 	    //assert( itinerary is still available )    // don't worry about this if your implementation of airline does not check availablity
 	    //assert( travelers.length > 0 )            // require at least one traveler
@@ -106,7 +106,7 @@ trait Airline {
 	    //assert( ticket.travelers == travelers )
 	
 	    (ticket, paymentGateway)
-	  }
+	  }*/
 }
 
 }
