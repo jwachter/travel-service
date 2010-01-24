@@ -54,14 +54,24 @@ object ItineraryHelper {
 		val link = "/book/booking.html?id="+it.id	  
 	  
         <tr id={it.id}>
-          	<td>
-            <strong>{ it.origin.code.name }</strong>-<strong>{ it.destination.code.name }</strong> <a href={link}>Book</a>
-            <p> Departure: ({it.departureDate}) - Duration: {it.duration}</p>
-            <p>{it.price}</p>
-            <ol>
+          	<td><strong>{it.origin.code.name} to { it.destination.code.name }</strong></td>
+            <td><a href={link}>Book this Trip</a></td>
+            <td>{it.departureDate}</td>
+        </tr>
+        <tr>
+            <td>Departure: ({it.departureDate})</td>
+            <td>Duration: {it.duration}</td>
+            <td>Price: {it.price}</td>
+        </tr>
+        <tr>
+            <td colspan="3">
                 { for (segment <- it.segments) yield segmentToXHTML(segment) }
-            </ol>
             </td>
+        </tr>
+        <tr>
+        <td colspan="3">
+        &nbsp;
+        </td>
         </tr>
     }
  
@@ -69,23 +79,23 @@ object ItineraryHelper {
 	// Transform a Segment into XHTML
 	//
 	def segmentToXHTML(s : Segment):NodeSeq={
-        <li>
-            <p><strong>{ s.origin.code.name }</strong> - 
-            <strong>{ s.destination.code.name }</strong>
-            <em>({ s.departureDate })</em>
-            </p>
-            <ol>
+        <div style="width:80%;border:1px solid #bbb">
+            <div><strong>{ s.origin.code.name } to { s.destination.code.name }</strong> ({ s.departureDate })</div> 
+            <table width="100%" style="border:1px dotted #ddd">
                 { for (hop <- s.hops) yield hopToXHTML(hop) }
-            </ol>
-        </li>
+            </table>
+        </div>
 	}
 	
 	//
 	// Transform a Hop into XHTML
 	//
 	def hopToXHTML(h:Hop):NodeSeq = {
-	    <li>
-            {h.flightNumber} from { h.origin.code.name } to { h.destination.code.name } @ ({ h.departureDate }) in {h.duration}h
-        </li>
+	    <tr>
+            <td>[{h.flightNumber}]</td>
+            <td>{ h.origin.code.name }</td>
+            <td>{ h.destination.code.name }</td>
+            <td>({ h.departureDate }) in {h.duration}h</td>
+        </tr>
 	}
 }

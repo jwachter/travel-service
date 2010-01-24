@@ -104,7 +104,7 @@ class Search {
         	    case Full((p1, p2)) => {
         	      val its = lufthansa.searchOneway(p1, p2, date)
         	      ItineraryHolder.set(Full(its))
-        	      <ul>{its.take(100).map(e => ItineraryHelper.itineraryToXHTML(e))}</ul>
+        	      <table width="100%">{its.take(100).map(e => ItineraryHelper.itineraryToXHTML(e))}</table>
                 }
         	    case _ => <p>An error occured while processing your search.</p>
         	  }
