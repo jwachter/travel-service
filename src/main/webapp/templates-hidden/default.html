@@ -2,15 +2,18 @@
 	<head>
 		<meta http-equiv="content-type" content="text/html; charset=UTF-8" />
 		<title>Generic Airlines Service</title>
+		<link rel="stylesheet" type="text/css" href="/css/main.css" />
+		<link rel="stylesheet" type="text/css" href="/css/ui-lightness/ui.all.css" />
 		<script id="jquery" src="/classpath/jquery.js" type="text/javascript"></script>
+		<script id="jqueryui" src="/js/jquery-ui-1.6.custom.min.js" type="text/javascript"></script>
+		<script type="text/JavaScript">
+			$(function(){
+				$('.datepicker').datepicker({inline:true, dateFormat : 'yy/mm/dd'});
+			});
+		</script>
 	</head>
 	<body>
 		<lift:msgs/>
-			<div style="margin:0 auto; width:600px">
-				<img src="/media/GenericAirlines.png" width="600" height="200" alt="Generic Airlines Logo" title="The friendly generic airline at your service!" />
-			</div>
-			<div style="margin:0 auto; width:500px">
-				<lift:bind name="content" />
-			</div>
+		<lift:bind name="content" />
 	</body>
 </html>

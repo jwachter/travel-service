@@ -1,0 +1,62 @@
+body {
+	background-color:#485558;
+}
+
+div#logo {
+	margin:0 auto;
+	width: 600px
+}
+
+div#messages {
+	margin:0 auto;
+	width: 600px;
+}
+
+div#content {
+	margin:0 auto;
+	width: 400px;
+}
+
+label.label {
+	float:left;
+	width:130px;
+	text-align:right;
+	text-transform:uppercase;
+}
+
+input.field {
+	width:200px;
+}
+
+div.formItemContainer {
+	clear:left;
+}
+
+div.formButtonContainer {
+	text-align:center;
+}
+
+p.success {
+	width: 100%;
+	text-align:center;
+	font-size:larger;
+}
+
+div#searchcontainer {
+	background-image: url('/media/background.png');
+	width: 820px;
+	height: 520px;
+	margin: 50px auto;
+	padding: 40px;
+}
+
+div#accordionContainer {
+	margin:80px auto;
+	width:350px;
+	padding:6px;
+	background-color:white;
+}
+
+h2.searchFormHeader {
+	background-color:#DDD;
+}

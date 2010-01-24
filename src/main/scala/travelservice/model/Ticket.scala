@@ -69,12 +69,16 @@ class Ticket extends LongKeyedMapper[Ticket] with IdPK{
 	def toXML = {
     	val tfs : List[TicketFlight] = TicketFlight.findAll(By(TicketFlight._ticket, this))
     	
+    	// Get all segment numbers and sort them without duplicates
     	val segNums = tfs.map(_.segmentNumber.is).removeDuplicates.sort((e1,e2)=>e1 < e2)
     
+    	// group all flights by there segment
     	val segments : List[List[TicketFlight]] = segNums.map(x => tfs.filter(_.segmentNumber.is == x))
      
+    	// sort the flights themselves
     	val sorted = segments.map(l => l.sort((e1,e2)=>e1.positionNumber.is < e2.positionNumber.is))
      
+    	// retreive the real Flight objects for each TicketFlight
     	val groupedFlights : List[List[Flight]] = sorted.map(l => l.map(tf => tf.flight.open_!))
      
     	<ticket id={id.is.toString}>

@@ -1,64 +1,73 @@
 <lift:surround with="default" at="content">
   <head>      
-	  <link rel="stylesheet" type="text/css" href="/style/ui.all.css" />
-	  <link rel="stylesheet" type="text/css" href="/style/ui.datepicker.css" />
-	  <script type="text/javascript" src="/scripts/jquery-ui.min.js"></script>
-	  <script type="text/javascript" src="/scripts/jquery.datePicker.js"></script>
+	  <script src="/js/search.js"></script>
   </head>
-	<div id="simplesearch" style="-moz-border-radius-bottomleft:15px; -webkit-border-bottom-left-radius:15px;-moz-border-radius-bottomright:15px; -webkit-border-bottom-right-radius:15px; border:1px solid orange;width:350px;margin:15px auto"><h3 style="margin:0;text-align:center;padding:3px;background-color:orange; text-transform:uppercase; font-weight:bold; color:white">Search Flights</h3>
-		<form method="POST" action="search.html">
-			<div style="clear:left"> 
-		        <label for="type" style="float:left;width:130px;text-align:right;text-transform:uppercase">Type</label>
-				<select id="type" name="type" style="width:200px">
-				    <option value="oneway" selected="selected">one way</option>
-				    <option value="roundtrip">round trip</option>
-				</select>
-		    </div>
-			<div style="clear:left"> 
-		        <label for="from" style="float:left;width:130px;text-align:right;text-transform:uppercase">From</label>
-		        <input type="text" name="from" style="width:200px"/>
-		    </div>
-			<div style="clear:left" > 
-		        <label for="to" style="float:left;width:130px;text-align:right;text-transform:uppercase">To</label>
-		        <input type="text" name="to" style="width:200px"/>
-		    </div>
-			<div style="clear:left"> 
-		        <label for="departure" style="float:left;width:130px;text-align:right;text-transform:uppercase">Departure</label>
-		        <input type="text" name="departure" class="datepicker" style="width:200px"/>
-		    </div>
-			<div id="returnDateContainer" style="clear:left"> 
-		        <label for="returnDate" style="float:left;width:130px;text-align:right;text-transform:uppercase">Return</label>
-		        <input type="text" id="returnDate" name="returnDate" class="datepicker" style="width:200px"/>
-		    </div>
-			<div style="text-align:center"> 
-		        <input type="submit" value="search" style="margin:0 auto"/>
-		    </div>
-	    </form>
-    </div>
-
-  <div id="multisegmentsearch" style="-moz-border-radius-bottomleft:15px; -webkit-border-bottom-left-radius:15px;-moz-border-radius-bottomright:15px; -webkit-border-bottom-right-radius:15px; border:1px solid orange;width:350px;margin:15px auto"><h3 style="margin:0;text-align:center;padding:3px;background-color:orange; text-transform:uppercase; font-weight:bold; color:white">Plan Trips</h3>
-	<div style="clear:left"> 
-        <label for="multiFrom" style="float:left;width:130px;text-align:right;text-transform:uppercase">From</label>
-        <input type="text" id="multiFrom" name="multiFrom" style="width:200px"/>
-    </div>
-	<div style="clear:left" > 
-        <label for="multiTo" style="float:left;width:130px;text-align:right;text-transform:uppercase">To</label>
-        <input type="text" id="multiTo" name="multiTo" style="width:200px"/>
-    </div>
-	<div style="clear:left"> 
-        <label for="multiDeparture" style="float:left;width:130px;text-align:right;text-transform:uppercase">Departure</label>
-        <input type="text" id="multiDeparture" name="multiDeparture" class="datepicker" style="width:200px"/>
-    </div>
-    <div id="currentSegments"><h4>Segments:</h4><ol id="segments"></ol></div>
-	<div style="text-align:center">
-		<button id="addSegment" name="addSegment">Add segment</button> 
-    </div>
-  <form method="POST" action="search.html?type=multisegment">
-    <input type="hidden" id="originSequence" name="origins" value="" />
-    <input type="hidden" id="destinationSequence" name="destinations" value="" />
-    <input type="hidden" id="departureSequence" name="departures" value="" />
-    <input type="submit" value="search" id="multisubmit" name="multisubmit" style="margin:0 auto"/>
-  </form>
+  <div id="searchcontainer">
+  	<div id="accordionContainer">
+	  	<div id="accordion">
+	  		<h3 class="searchFormHeader">Standard Search</h3>
+			<div id="simplesearch" class="searchformContainer">
+				<form method="POST" action="search.html">
+					<div class="formItemContainer"> 
+				        <label for="type" class="label">Type</label>
+						<select id="type" name="type" class="field">
+						    <option value="oneway" selected="selected">one way</option>
+						    <option value="roundtrip">round trip</option>
+						</select>
+				    </div>
+					<div class="formItemContainer"> 
+				        <label for="from" class="label">From</label>
+				        <input type="text" name="from" class="field"/>
+				    </div>
+					<div class="formItemContainer"> 
+				        <label for="to" class="label">To</label>
+				        <input type="text" name="to" class="field"/>
+				    </div>
+					<div class="formItemContainer"> 
+				        <label for="departure" class="label">Departure</label>
+				        <input type="text" name="departure" class="datepicker field"/>
+				    </div>
+					<div id="returnDateContainer" class="formItemContainer"> 
+				        <label for="returnDate" class="label">Return</label>
+				        <input type="text" id="returnDate" name="returnDate" class="datepicker field"/>
+				    </div>
+					<div class="formButtonContainer"> 
+				        <input type="submit" value="search" style="margin:0 auto"/>
+				    </div>
+			    </form>
+			</div>
+	  		<h3 class="searchFormHeader">Multi Segment Search</h3>
+			<div id="multisegmentsearch" class="searchformContainer">
+				<div class="formItemContainer"> 
+			        <label for="multiFrom" class="label">From</label>
+			        <input type="text" id="multiFrom" name="multiFrom" class="field"/>
+			    </div>
+				<div class="formItemContainer" > 
+			        <label for="multiTo" class="label">To</label>
+			        <input type="text" id="multiTo" name="multiTo" class="field"/>
+			    </div>
+				<div class="formItemContainer"> 
+			        <label for="multiDeparture" class="label">Departure</label>
+			        <input type="text" id="multiDeparture" name="multiDeparture" class="datepicker field"/>
+			    </div>
+				<div style="text-align:center">
+					<button id="addSegment" name="addSegment">Add segment</button> 
+			    </div>
+			    <div id="currentSegments">
+			    	<h3>Segments</h3>
+			    	<table style="width:100%;border: 1px solid black" width="100%" id="currentSegmentsTable">
+			    	</table>
+			    </div>
+				<form method="POST" action="search.html?type=multisegment">
+					<input type="hidden" id="originSequence" name="origins" value="" />
+				  	<input type="hidden" id="destinationSequence" name="destinations" value="" />
+				    <input type="hidden" id="departureSequence" name="departures" value="" />
+				    <div class="formButtonContainer">
+				    	<input type="submit" value="search" id="multisubmit" name="multisubmit"/>
+				    </div>
+				</form>
+			</div>
+	  	</div>
+  	</div>
   </div>
-  <script src="/scripts/search.js"></script>
 </lift:surround>
