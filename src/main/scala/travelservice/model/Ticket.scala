@@ -64,7 +64,10 @@ class Ticket extends LongKeyedMapper[Ticket] with IdPK{
 	// Transform to XML
 	//
 	def toXML = {
-	  <ticket>
-	  </ticket>
-	}
+	  val tfs = TicketFlight.findAll(By(TicketFlight._ticket, this), OrderBy(TicketFlight.segmentNumber, Ascending), OrderBy(TicketFlight.positionNumber, Ascending))
+	  
+	  println(tfs)
+	  
+	  <ticket>test</ticket>
+    }
 }

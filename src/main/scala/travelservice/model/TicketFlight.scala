@@ -32,6 +32,11 @@ class TicketFlight extends LongKeyedMapper[TicketFlight] with IdPK{
 	def getSingleton = TicketFlight
  
 	//
+	// Segment Number
+	//
+	object segmentNumber extends MappedInt(this)
+ 
+	//
 	// To enable persistence of Itinerary: This is the position of this Flight inside the Itinerary and the specific Segment
     //
 	object positionNumber extends MappedInt(this)

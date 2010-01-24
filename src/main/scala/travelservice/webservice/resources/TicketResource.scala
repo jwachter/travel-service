@@ -88,7 +88,7 @@ object TicketResource extends RESTResource{
 			  val ticket = Ticket.find(By(Ticket.uid, id))
 			  ticket match {
 			    case Full(t) => try {
-			      t.paymentStatus(true);
+			      t.paymentStatus(true).save;
 			      Full(OkResponse())
 			    } catch {
 			      case e:Exception => Full(InternalServerErrorResponse())

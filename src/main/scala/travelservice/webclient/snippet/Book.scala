@@ -201,17 +201,21 @@ class Book {
 	  })
    
 	  // Associate Flights with Ticket.
-	  var pn = 0;
+	  var sn = 0;
 	  it.segments.foreach(s => {
+		var pn = 0;
 	    s.hops.foreach(h => {
 	    	val f = Flight.find(By(Flight.number, h.flightNumber))
 	    	if(!f.isEmpty){
 	    	    pn += 1
-	    		TicketFlight.create._flight(f.open_!)._ticket(ticket).positionNumber(pn).save
+	    		TicketFlight.create._flight(f.open_!)._ticket(ticket).segmentNumber(sn).positionNumber(pn).save
 	    	}
+	    	sn += 1
 	    })
 	  })
-	  
+   
+	  println(ticket.toXML)
+   
 	  // Return the Ticket
 	  ticket
     }

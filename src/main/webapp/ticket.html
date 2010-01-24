@@ -1,0 +1,20 @@
+<lift:surround with="default" at="content">
+	<lift:TicketDisplay.show>
+		<div>
+			<ticket:main />
+		</div>
+		<div id="travelers">
+			<table>
+				<ticket:travelers />
+			</table>
+		</div>
+		<div>
+			<table>
+				<ticket:flights />
+			</table>
+		</div>
+		<div>
+			<strong><ticket:price /></strong> - <ticket:paymentStatus />
+		</div>
+	</lift:TicketDisplay.show>
+</lift:surround>

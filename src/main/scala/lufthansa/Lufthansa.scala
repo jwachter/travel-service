@@ -116,11 +116,12 @@ package lufthansa {
                     // calc sum of durations
                     val singleDurations : List [Int] = flightseq.map (flight => flight.duration)
                     val sumOfDurations = singleDurations.foldLeft(0)((a,b) => a+b)
+                    val price = flightseq.map(h => h.price.is).foldLeft(0)((a,b) => a+b)
 
                     // create segment for itinerary
                     val seg = new specification.Segment (origin, destination, hops.head.departureDate, sumOfDurations, hops)
 
-                    new specification.Itinerary (generateUniqueId(List(seg)), seg.departureDate, seg.duration, origin, destination, seg :: Nil, 100)
+                    new specification.Itinerary (generateUniqueId(List(seg)), seg.departureDate, seg.duration, origin, destination, seg :: Nil, price)
                 }
             )
             // sort by duration time
@@ -242,8 +243,10 @@ package lufthansa {
 
             val allDurations : List[Int] = allSegments.map (seg => seg.duration)
             val sumOfSegmentDurations = allDurations.foldLeft (0)((a,b) => a+b)
+            
+            val price = itineraries.map(i => i.price).foldLeft(0)((a,b)=>a+b)
 
-            new specification.Itinerary (generateUniqueId(allSegments), departureDate, sumOfSegmentDurations, origin, destination, allSegments, 100)
+            new specification.Itinerary (generateUniqueId(allSegments), departureDate, sumOfSegmentDurations, origin, destination, allSegments, price)
         }
 
 

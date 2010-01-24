@@ -145,6 +145,18 @@ class Flight extends LongKeyedMapper[Flight] with IdPK{
 		 <departure>{iso(this.departure.is)}</departure>
 		 <duration>{this.duration.is}</duration>
 		</flight>
+
+		//
+		// Transforms the Object into XML.
+		//
+		def toXHTMLTable = 
+			<tr>
+		<td>{this.number.is}</td>
+		<td>{this.origin.code.is}</td>
+		<td>{this.destination.code.is}</td>
+		<td>{iso(this.departure.is)}</td>
+		<td>{this.duration.is}</td>
+		</tr>
  
     //
     // Transforms the Object into a JSON representation.
