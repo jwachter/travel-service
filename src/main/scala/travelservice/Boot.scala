@@ -22,6 +22,7 @@ import _root_.net.liftweb.mapper._
 import _root_.net.liftweb.sitemap._
 import _root_.net.liftweb.sitemap.Loc._
 import _root_.org.joda.time._
+import _root_.org.joda.time.format._
 import Helpers._
 
 import travelservice.model._
@@ -33,6 +34,9 @@ import travelservice.webservice.resources._
   */
 class Boot extends Bootable{
   def boot {
+    
+    LiftRules.early append { _ setCharacterEncoding "UTF-8" }
+    
     // Which packages are treated as sources for views and snippets.
     LiftRules.addToPackages("travelservice.webclient") 
     
@@ -41,18 +45,17 @@ class Boot extends Bootable{
       DB.defineConnectionManager(DefaultConnectionIdentifier, DBVendor)
 
     LiftRules.dispatch.prepend(SearchResource.dispatch)
-    LiftRules.dispatch.prepend(CityResource.dispatch)
-    LiftRules.dispatch.prepend(AirportResource.dispatch)
-    LiftRules.dispatch.prepend(FlightsResource.dispatch)
+    LiftRules.dispatch.prepend(TicketResource.dispatch)
 
     // Create or update the Schema information for the model classes
     // Remove comments for 1 run to initialize the database
     
     // Prevent bugs while database schema is not stable, start from blank!
+    // Note: Use H2 Database for development to speedup startup and 
       
-    Schemifier.destroyTables_!!(Log.infoF _, Airport, City, Flight)
+    Schemifier.destroyTables_!!(Log.infoF _, Airport, City, Flight, Ticket, TicketFlight, TicketTraveler, Traveler)
     
-    Schemifier.schemify(true, Log.infoF _, Airport, City, Flight)
+    Schemifier.schemify(true, Log.infoF _, Airport, City, Flight, Ticket, TicketFlight, TicketTraveler, Traveler)
     
     initialize()
   }
@@ -88,7 +91,7 @@ class Boot extends Bootable{
     CDG.save
     val ZRH = Airport.create.code("ZRH").name("Zurich International Airport")._city(Zurich).lat(47.464722).long(8.549167)
     ZRH.save
-    val YYZ = Airport.create.code("YYZ").name("Toronto Pearson International Airport")._city(Frankfurt).lat(43.677222).long(-79.630556)
+    val YYZ = Airport.create.code("YYZ").name("Toronto Pearson International Airport")._city(Toronto).lat(43.677222).long(-79.630556)
     YYZ.save
     val YVR = Airport.create.code("YVR").name("Vancouver International Airport")._city(Vancouver).lat(50.026422).long(8.543125)
     YVR.save
@@ -161,65 +164,69 @@ class Boot extends Bootable{
     
     LiftRules.early append { _ setCharacterEncoding "UTF-8" }
 
+    def randomPrice : Int = ((Math.random+0.1)*600).toInt
+    
+    // Generate Unique Flight Numbers
+    var fn = 1
     
     for(i <- (1 to 365)){
       // FROM FRA
-      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(TXL).departure(TIME_FRA_TXL_1.plusDays(i).toDate).duration(1).save
-      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(TXL).departure(TIME_FRA_TXL_2.plusDays(i).toDate).duration(1).save
-      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(TXL).departure(TIME_FRA_TXL_3.plusDays(i).toDate).duration(1).save
-      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(JFK).departure(TIME_FRA_JFK_1.plusDays(i).toDate).duration(9).save
-      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(JFK).departure(TIME_FRA_JFK_2.plusDays(i).toDate).duration(9).save
-      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(YUL).departure(TIME_FRA_YUL.plusDays(i).toDate).duration(8).save
-      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(CDG).departure(TIME_FRA_CDG_1.plusDays(i).toDate).duration(1).save
-      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(CDG).departure(TIME_FRA_CDG_2.plusDays(i).toDate).duration(1).save
-      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(CDG).departure(TIME_FRA_CDG_3.plusDays(i).toDate).duration(1).save
-      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(YYZ).departure(TIME_FRA_YYZ_1.plusDays(i).toDate).duration(9).save
-      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(YYZ).departure(TIME_FRA_YYZ_2.plusDays(i).toDate).duration(9).save
-      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(NRT).departure(TIME_FRA_NRT.plusDays(i).toDate).duration(11).save
-      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(YVR).departure(TIME_FRA_YVR.plusDays(i).toDate).duration(11).save
-      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(ZRH).departure(TIME_FRA_ZRH_1.plusDays(i).toDate).duration(1).save
-      Flight.create.number(FRA.code.is+i)._origin(FRA)._destination(ZRH).departure(TIME_FRA_ZRH_2.plusDays(i).toDate).duration(1).save
+      Flight.create.number("LH"+(fn += 1))._origin(FRA)._destination(TXL).departure(TIME_FRA_TXL_1.plusDays(i).toDate).duration(1).price(randomPrice).save
+      Flight.create.number("LH"+(fn += 1))._origin(FRA)._destination(TXL).departure(TIME_FRA_TXL_2.plusDays(i).toDate).duration(1).price(randomPrice).save
+      Flight.create.number("LH"+(fn += 1))._origin(FRA)._destination(TXL).departure(TIME_FRA_TXL_3.plusDays(i).toDate).duration(1).price(randomPrice).save
+      Flight.create.number("LH"+(fn += 1))._origin(FRA)._destination(JFK).departure(TIME_FRA_JFK_1.plusDays(i).toDate).duration(9).price(randomPrice).save
+      Flight.create.number("LH"+(fn += 1))._origin(FRA)._destination(JFK).departure(TIME_FRA_JFK_2.plusDays(i).toDate).duration(9).price(randomPrice).save
+      Flight.create.number("LH"+(fn += 1))._origin(FRA)._destination(YUL).departure(TIME_FRA_YUL.plusDays(i).toDate).duration(8).price(randomPrice).save
+      Flight.create.number("LH"+(fn += 1))._origin(FRA)._destination(CDG).departure(TIME_FRA_CDG_1.plusDays(i).toDate).duration(1).price(randomPrice).save
+      Flight.create.number("LH"+(fn += 1))._origin(FRA)._destination(CDG).departure(TIME_FRA_CDG_2.plusDays(i).toDate).duration(1).price(randomPrice).save
+      Flight.create.number("LH"+(fn += 1))._origin(FRA)._destination(CDG).departure(TIME_FRA_CDG_3.plusDays(i).toDate).duration(1).price(randomPrice).save
+      Flight.create.number("LH"+(fn += 1))._origin(FRA)._destination(YYZ).departure(TIME_FRA_YYZ_1.plusDays(i).toDate).duration(9).price(randomPrice).save
+      Flight.create.number("LH"+(fn += 1))._origin(FRA)._destination(YYZ).departure(TIME_FRA_YYZ_2.plusDays(i).toDate).duration(9).price(randomPrice).save
+      Flight.create.number("LH"+(fn += 1))._origin(FRA)._destination(NRT).departure(TIME_FRA_NRT.plusDays(i).toDate).duration(11).price(randomPrice).save
+      Flight.create.number("LH"+(fn += 1))._origin(FRA)._destination(YVR).departure(TIME_FRA_YVR.plusDays(i).toDate).duration(11).price(randomPrice).save
+      Flight.create.number("LH"+(fn += 1))._origin(FRA)._destination(ZRH).departure(TIME_FRA_ZRH_1.plusDays(i).toDate).duration(1).price(randomPrice).save
+      Flight.create.number("LH"+(fn += 1))._origin(FRA)._destination(ZRH).departure(TIME_FRA_ZRH_2.plusDays(i).toDate).duration(1).price(randomPrice).save
       
       // origin TXL
-      Flight.create.number(TXL.code.is+i)._origin(TXL)._destination(FRA).departure(TIME_TXL_FRA_1.plusDays(i).toDate).duration(1).save
-      Flight.create.number(TXL.code.is+i)._origin(TXL)._destination(FRA).departure(TIME_TXL_FRA_2.plusDays(i).toDate).duration(1).save
-      Flight.create.number(TXL.code.is+i)._origin(TXL)._destination(CDG).departure(TIME_TXL_CDG.plusDays(i).toDate).duration(2).save
-      Flight.create.number(TXL.code.is+i)._origin(TXL)._destination(ZRH).departure(TIME_TXL_ZRH.plusDays(i).toDate).duration(1).save
+      Flight.create.number("LH"+(fn += 1))._origin(TXL)._destination(FRA).departure(TIME_TXL_FRA_1.plusDays(i).toDate).duration(1).price(randomPrice).save
+      Flight.create.number("LH"+(fn += 1))._origin(TXL)._destination(FRA).departure(TIME_TXL_FRA_2.plusDays(i).toDate).duration(1).price(randomPrice).save
+      Flight.create.number("LH"+(fn += 1))._origin(TXL)._destination(CDG).departure(TIME_TXL_CDG.plusDays(i).toDate).duration(2).price(randomPrice).save
+      Flight.create.number("LH"+(fn += 1))._origin(TXL)._destination(ZRH).departure(TIME_TXL_ZRH.plusDays(i).toDate).duration(1).price(randomPrice).save
     
       // origin CDG
-      Flight.create.number(CDG.code.is+i)._origin(CDG)._destination(TXL).departure(TIME_CDG_TXL.plusDays(i).toDate).duration(2).save
-      Flight.create.number(CDG.code.is+i)._origin(CDG)._destination(TXL).departure(TIME_CDG_FRA_1.plusDays(i).toDate).duration(1).save
-      Flight.create.number(CDG.code.is+i)._origin(CDG)._destination(TXL).departure(TIME_CDG_FRA_2.plusDays(i).toDate).duration(1).save
-      Flight.create.number(CDG.code.is+i)._origin(CDG)._destination(TXL).departure(TIME_CDG_YUL.plusDays(i).toDate).duration(7).save
-      Flight.create.number(CDG.code.is+i)._origin(CDG)._destination(TXL).departure(TIME_CDG_YYZ.plusDays(i).toDate).duration(8).save
+      Flight.create.number("LH"+(fn += 1))._origin(CDG)._destination(TXL).departure(TIME_CDG_TXL.plusDays(i).toDate).duration(2).price(randomPrice).save
+      Flight.create.number("LH"+(fn += 1))._origin(CDG)._destination(FRA).departure(TIME_CDG_FRA_1.plusDays(i).toDate).duration(1).price(randomPrice).save
+      Flight.create.number("LH"+(fn += 1))._origin(CDG)._destination(FRA).departure(TIME_CDG_FRA_2.plusDays(i).toDate).duration(1).price(randomPrice).save
+      Flight.create.number("LH"+(fn += 1))._origin(CDG)._destination(YUL).departure(TIME_CDG_YUL.plusDays(i).toDate).duration(7).price(randomPrice).save
+      Flight.create.number("LH"+(fn += 1))._origin(CDG)._destination(YYZ).departure(TIME_CDG_YYZ.plusDays(i).toDate).duration(8).price(randomPrice).save
     
       // origin ZRH
-      Flight.create.number(ZRH.code.is+i)._origin(ZRH)._destination(TXL).departure(TIME_ZRH_TXL.plusDays(i).toDate).duration(1).save
-      Flight.create.number(ZRH.code.is+i)._origin(ZRH)._destination(FRA).departure(TIME_ZRH_FRA.plusDays(i).toDate).duration(1).save
-      Flight.create.number(ZRH.code.is+i)._origin(ZRH)._destination(YYZ).departure(TIME_ZRH_YYZ.plusDays(i).toDate).duration(9).save
+      Flight.create.number("LH"+(fn += 1))._origin(ZRH)._destination(TXL).departure(TIME_ZRH_TXL.plusDays(i).toDate).duration(1).price(randomPrice).save
+      Flight.create.number("LH"+(fn += 1))._origin(ZRH)._destination(FRA).departure(TIME_ZRH_FRA.plusDays(i).toDate).duration(1).price(randomPrice).save
+      Flight.create.number("LH"+(fn += 1))._origin(ZRH)._destination(YYZ).departure(TIME_ZRH_YYZ.plusDays(i).toDate).duration(9).price(randomPrice).save
     
 	  // origin YYZ
-	  Flight.create.number(YYZ.code.is+i)._origin(YYZ)._destination(YUL).departure(TIME_YYZ_YUL_1.plusDays(i).toDate).duration(1).save
-	  Flight.create.number(YYZ.code.is+i)._origin(YYZ)._destination(YUL).departure(TIME_YYZ_YUL_2.plusDays(i).toDate).duration(1).save
-	  Flight.create.number(YYZ.code.is+i)._origin(YYZ)._destination(CDG).departure(TIME_YYZ_CDG.plusDays(i).toDate).duration(8).save
-	  Flight.create.number(YYZ.code.is+i)._origin(YYZ)._destination(YVR).departure(TIME_YYZ_YVR.plusDays(i).toDate).duration(5).save
+	  Flight.create.number("LH"+(fn += 1))._origin(YYZ)._destination(YUL).departure(TIME_YYZ_YUL_1.plusDays(i).toDate).duration(1).price(randomPrice).save
+	  Flight.create.number("LH"+(fn += 1))._origin(YYZ)._destination(YUL).departure(TIME_YYZ_YUL_2.plusDays(i).toDate).duration(1).price(randomPrice).save
+	  Flight.create.number("LH"+(fn += 1))._origin(YYZ)._destination(CDG).departure(TIME_YYZ_CDG.plusDays(i).toDate).duration(8).price(randomPrice).save
+	  Flight.create.number("LH"+(fn += 1))._origin(YYZ)._destination(YVR).departure(TIME_YYZ_YVR.plusDays(i).toDate).duration(5).price(randomPrice).save
     
 	  // origin YVR
-	  Flight.create.number(YVR.code.is+i)._origin(YVR)._destination(FRA).departure(TIME_YVR_FRA.plusDays(i).toDate).duration(10).save
-	  Flight.create.number(YVR.code.is+i)._origin(YVR)._destination(YUL).departure(TIME_YVR_YUL.plusDays(i).toDate).duration(5).save
-	  Flight.create.number(YVR.code.is+i)._origin(YVR)._destination(YYZ).departure(TIME_YVR_YYZ.plusDays(i).toDate).duration(4).save
+	  Flight.create.number("LH"+(fn += 1))._origin(YVR)._destination(FRA).departure(TIME_YVR_FRA.plusDays(i).toDate).duration(10).price(randomPrice).save
+	  Flight.create.number("LH"+(fn += 1))._origin(YVR)._destination(YUL).departure(TIME_YVR_YUL.plusDays(i).toDate).duration(5).price(randomPrice).save
+	  Flight.create.number("LH"+(fn += 1))._origin(YVR)._destination(YYZ).departure(TIME_YVR_YYZ.plusDays(i).toDate).duration(4).price(randomPrice).save
     
 	  // origin NRT
-	  Flight.create.number(NRT.code.is+i)._origin(NRT)._destination(FRA).departure(TIME_NRT_FRA.plusDays(i).toDate).duration(12).save
+	  Flight.create.number("LH"+(fn += 1))._origin(NRT)._destination(FRA).departure(TIME_NRT_FRA.plusDays(i).toDate).duration(12).price(randomPrice).save
     
 	  // origin JFK
-	  Flight.create.number(JFK.code.is+i)._origin(JFK)._destination(FRA).departure(TIME_JFK_FRA.plusDays(i).toDate).duration(7).save
+	  Flight.create.number("LH"+(fn += 1))._origin(JFK)._destination(FRA).departure(TIME_JFK_FRA.plusDays(i).toDate).duration(7).price(randomPrice).save
 
 	  // origin YUL
-	  Flight.create.number(YUL.code.is+i)._origin(YUL)._destination(FRA).departure(TIME_YUL_FRA.plusDays(i).toDate).duration(7).save
-	  Flight.create.number(YUL.code.is+i)._origin(YUL)._destination(CDG).departure(TIME_YUL_CDG.plusDays(i).toDate).duration(7).save
-	  Flight.create.number(YUL.code.is+i)._origin(YUL)._destination(YYZ).departure(TIME_YUL_YYZ.plusDays(i).toDate).duration(1).save
-	  Flight.create.number(YUL.code.is+i)._origin(YUL)._destination(YVR).departure(TIME_YUL_YVR.plusDays(i).toDate).duration(6).save
+	  Flight.create.number("LH"+(fn += 1))._origin(YUL)._destination(FRA).departure(TIME_YUL_FRA.plusDays(i).toDate).duration(7).price(randomPrice).save
+	  Flight.create.number("LH"+(fn += 1))._origin(YUL)._destination(CDG).departure(TIME_YUL_CDG.plusDays(i).toDate).duration(7).price(randomPrice).save
+	  Flight.create.number("LH"+(fn += 1))._origin(YUL)._destination(YYZ).departure(TIME_YUL_YYZ.plusDays(i).toDate).duration(1).price(randomPrice).save
+	  Flight.create.number("LH"+(fn += 1))._origin(YUL)._destination(YVR).departure(TIME_YUL_YVR.plusDays(i).toDate).duration(6).price(randomPrice).save
     }
   }
 }

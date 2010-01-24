@@ -26,6 +26,9 @@ import _root_.org.joda.time.format._
  */
 class FlightTable
 {
+  
+  object ItineraryHolder extends SessionVar[Seq[specification.Itinerary]](Nil)
+  
   // parameter lists will enter this class as a string which is separated by
   // this symbol.
   val separator = ';'
@@ -67,7 +70,12 @@ class FlightTable
       case ( Full( orig ), Empty ) => lufthansa.searchOneway( orig.toAirport, City.findByName( to ).open_!.toCity, departure.toDate )
       case ( _, _ ) => lufthansa.searchOneway( City.findByName( from ).open_!.toCity, City.findByName( to ).open_!.toCity, departure.toDate )
     }
-
+    
+    its match {
+      case seq if seq.size > 0 => ItineraryHolder.set(its)
+      case _ => ItineraryHolder.set(Nil)
+    }
+    
     // convert the itinaries into XHTML code to display a result on the webpage
     its.flatMap( i => ItineraryHelper.itineraryToXHTML( i ) )
   }
@@ -98,6 +106,11 @@ class FlightTable
       case ( _, _ ) => lufthansa.searchRoundtrip( City.findByName( from ).open_!.toCity, City.findByName( to ).open_!.toCity, departure, returnDate )
     }
 
+    its match {
+      case seq if seq.size > 0 => ItineraryHolder.set(its)
+      case _ => ItineraryHolder.set(Nil)
+    }
+    
     // return the whole list of intinaries as XHTML code.
     its.flatMap(i => ItineraryHelper.itineraryToXHTML(i))
   }
@@ -107,7 +120,7 @@ class FlightTable
    */
   def multisegment( html : NodeSeq ) =
   {
-	  def airportOrCity( id1:String, id2:String ):( world.Place, world.Place ) = {
+	  def airportOrCity( id1:String, id2:String ):( specification.Place, specification.Place ) = {
 	    val oap = Airport.findByCode( id1 )
 	    val dap = Airport.findByCode( id2 )
 	
@@ -115,9 +128,9 @@ class FlightTable
 	    
 	    ( oap, dap ) match {
 	      case ( Full( orig ), Full( dest)) => ( orig.toAirport, dest.toAirport )
-	      case ( Empty, Full( dest ) ) => ( City.find( id1 ).open_!.toCity, dest.toAirport )
-	      case ( Full( orig), Empty ) => ( orig.toAirport, City.find( id2 ).open_!.toCity )
-	      case ( _, _ ) => println( id1 + " " + id2 ); ( City.find( id1 ).open_!.toCity, City.find( id2 ).open_!.toCity )
+	      case ( Empty, Full( dest ) ) => ( City.findByName( id1 ).open_!.toCity, dest.toAirport )
+	      case ( Full( orig), Empty ) => ( orig.toAirport, City.findByName( id2 ).open_!.toCity )
+	      case ( e1, e2 ) => ( City.findByName( id1 ).open_!.toCity, City.findByName( id2 ).open_!.toCity )
 	    }		  
 	  }
    
@@ -129,10 +142,22 @@ class FlightTable
    
 	  val param = origins.zip( destinations ).map( ( e ) => airportOrCity( e._1, e._2 ) ).zip( departures ).map( ( e ) => ( e._1._1, e._1._2, e._2 ) )
    
-	  val real : Seq[( world.Place, world.Place, Date )] = param.map(e => ( e._1, e._2, df.parseDateTime( e._3 ).toDate ) )
+	  val real : Seq[( specification.Place, specification.Place, Date )] = param.map(e => ( e._1, e._2, df.parseDateTime( e._3 ).toDate ) )
+   
    
     val its = lufthansa.searchMultisegment( real )
+    
+    its match {
+      case seq if seq.size > 0 => ItineraryHolder.set(its)
+      case _ => ItineraryHolder.set(Nil)
+    }
 
-    its.flatMap( i => ItineraryHelper.itineraryToXHTML( i ) )
+    <p>{its.flatMap( i => ItineraryHelper.itineraryToXHTML( i ) )}</p><a href="search.html">Check cache</a>
+  }
+  
+  def checkCache(xhtml:NodeSeq)={
+    val id = S.param("id").open_!
+    
+    <p><strong>{ItineraryHolder.is.size}</strong></p><p>{ItineraryHolder.is.filter(e => e.id == id).map(e => ItineraryHelper.itineraryToXHTML(e))}</p>
   }
 }

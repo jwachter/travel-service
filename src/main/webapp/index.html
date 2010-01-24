@@ -1,80 +1,64 @@
 <lift:surround with="default" at="content">
-        
+  <head>      
   <link rel="stylesheet" type="text/css" href="/style/ui.all.css" />
   <link rel="stylesheet" type="text/css" href="/style/ui.datepicker.css" />
   <script type="text/javascript" src="/scripts/jquery-ui.min.js"></script>
   <script type="text/javascript" src="/scripts/jquery.datePicker.js"></script>
-  
-  
-	<h2>Lufthansa travel service</h2>
-	<!--<lift:FlightHelper.showCount />-->
-	<h3>Search one way</h3>
-	<form method="POST" action="oneWayResult.html"> 
-    <table>
-      <tr>
-        <td>From:</td>
-        <td><input type="text" name="from" /></td>
-      </tr>
-      <tr>
-        <td>To:</td>
-        <td><input type="text" name="to" /></td>
-      </tr>
-      <tr>
-        <td>Departure:</td>
-        <td>
-          <input type="text" name="departure" class="datepicker"/>
-        </td>
-      </tr>
-      <tr>
-        <td>&nbsp;</td>
-        <td><input type="submit" value="search" /></td>
-      </tr>
-    </table>
-  </form>
-  
-  <h3>Search roundtrip</h3>
-  <form method="POST" action="roundtripResult.html"> 
-    <table>
-      <tr>
-        <td>From:</td>
-        <td><input type="text" name="from" /></td>
-      </tr>
-      <tr>
-        <td>To:</td>
-        <td><input type="text" name="to" /></td>
-      </tr>
-      <tr>
-        <td>Departure:</td>
-        <td>
-          <input type="text" name="departure" class="datepicker"/>
-        </td>
-      </tr>
-      <tr>
-        <td>Return date:</td>
-        <td>
-          <input type="text" name="returnDate" class="datepicker"/>
-        </td>
-      </tr>
-      <tr>
-        <td>&nbsp;</td>
-        <td><input type="submit" value="search" /></td>
-      </tr>
-    </table>
-  </form>
+  </head>
+	<div id="simplesearch" style="-moz-border-radius-bottomleft:15px; -webkit-border-bottom-left-radius:15px;-moz-border-radius-bottomright:15px; -webkit-border-bottom-right-radius:15px; border:1px solid orange;width:350px;margin:15px auto"><h3 style="margin:0;text-align:center;padding:3px;background-color:orange; text-transform:uppercase; font-weight:bold; color:white">Search Flights</h3>
+	<form method="POST" action="search.html">
+	<div style="clear:left"> 
+        <label for="type" style="float:left;width:130px;text-align:right;text-transform:uppercase">Type</label>
+		<select id="type" name="type" style="width:200px">
+		    <option value="oneway" selected="selected">one way</option>
+		    <option value="roundtrip">round trip</option>
+		</select>
+    </div>
+	<div style="clear:left"> 
+        <label for="from" style="float:left;width:130px;text-align:right;text-transform:uppercase">From</label>
+        <input type="text" name="from" style="width:200px"/>
+    </div>
+	<div style="clear:left" > 
+        <label for="to" style="float:left;width:130px;text-align:right;text-transform:uppercase">To</label>
+        <input type="text" name="to" style="width:200px"/>
+    </div>
+	<div style="clear:left"> 
+        <label for="departure" style="float:left;width:130px;text-align:right;text-transform:uppercase">Departure</label>
+        <input type="text" name="departure" class="datepicker" style="width:200px"/>
+    </div>
+	<div id="returnDateContainer" style="clear:left"> 
+        <label for="returnDate" style="float:left;width:130px;text-align:right;text-transform:uppercase">Return</label>
+        <input type="text" id="returnDate" name="returnDate" class="datepicker" style="width:200px"/>
+    </div>
+	<div style="text-align:center"> 
+        <input type="submit" value="search" style="margin:0 auto"/>
+    </div>
+    </form>
+    </div>
 
-  <h3>Search multi segment</h3>
-  <lift:SearchHelper.searchMultisegment form="post">
-    <table width="70%" id="multisegment">
-      <tr><td>From:</td><td>To:</td><td>Departure:</td></tr>
-      <tr><td><query:from /></td><td><query:to /></td><td><query:departure /></td></tr>
-      <tr><td><query:addSeg /></td><td colspan="2"><query:sendQuery /></td></tr>
-      <tr><td colspan="3">Current segments:</td></tr>
-      <tr><td><query:segFrom /></td><td><query:segTo /></td><td><query:segDepartures /></td></tr>
-    </table>
-  </lift:SearchHelper.searchMultisegment>
-  <script type="text/javascript">
-    $(function() {
-      $('.datepicker').datepicker({dateFormat:'yy/mm/dd'});
-    });
-  </script>
+  <div id="multisegmentsearch" style="-moz-border-radius-bottomleft:15px; -webkit-border-bottom-left-radius:15px;-moz-border-radius-bottomright:15px; -webkit-border-bottom-right-radius:15px; border:1px solid orange;width:350px;margin:15px auto"><h3 style="margin:0;text-align:center;padding:3px;background-color:orange; text-transform:uppercase; font-weight:bold; color:white">Plan Trips</h3>
+	<div style="clear:left"> 
+        <label for="multiFrom" style="float:left;width:130px;text-align:right;text-transform:uppercase">From</label>
+        <input type="text" id="multiFrom" name="multiFrom" style="width:200px"/>
+    </div>
+	<div style="clear:left" > 
+        <label for="multiTo" style="float:left;width:130px;text-align:right;text-transform:uppercase">To</label>
+        <input type="text" id="multiTo" name="multiTo" style="width:200px"/>
+    </div>
+	<div style="clear:left"> 
+        <label for="multiDeparture" style="float:left;width:130px;text-align:right;text-transform:uppercase">Departure</label>
+        <input type="text" id="multiDeparture" name="multiDeparture" class="datepicker" style="width:200px"/>
+    </div>
+    <div id="currentSegments"><h4>Segments:</h4><ol id="segments"></ol></div>
+	<div style="text-align:center">
+		<button id="addSegment" name="addSegment">Add segment</button> 
+    </div>
+  <form method="POST" action="search.html?type=multisegment">
+    <input type="hidden" id="originSequence" name="origins" value="" />
+    <input type="hidden" id="destinationSequence" name="destinations" value="" />
+    <input type="hidden" id="departureSequence" name="departures" value="" />
+    <input type="submit" value="search" id="multisubmit" name="multisubmit" style="margin:0 auto"/>
+  </form>
+  </div>
+  <script src="/scripts/search.js"></script>
 </lift:surround>

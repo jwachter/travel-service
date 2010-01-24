@@ -4,7 +4,7 @@ Travel Service Project
 Introduction
 ============
 
-In this project a webclient as well as a RESTful API for a fantasy travel planing service ist implemented. This service consists of an airline service, for searching and booking flights. To pay during booking a dummy payment service is implemented. If time allows hotel booking is also supported.
+In this project a webclient as well as a RESTful API for a fantasy travel planing service ist implemented. This service consists of an specification service, for searching and booking flights. To pay during booking a dummy payment service is implemented. If time allows hotel booking is also supported.
 
 Purpose
 =======

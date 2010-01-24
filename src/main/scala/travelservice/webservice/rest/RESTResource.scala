@@ -76,7 +76,7 @@ trait RESTResource {
 				}
 		} catch {
 			case e:NoSuchElementException => Full(MethodNotAllowedResponse())
-			case e:Exception => println(e.getMessage);Full(InternalServerErrorResponse())
+			case e:Exception => Full(InternalServerErrorResponse())
 		}
 	}
 }

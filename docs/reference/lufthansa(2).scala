@@ -1,4 +1,4 @@
-import specification._
+import airline._
 
 trait Lufthansa extends Airline {
   def searchOneway(origin: Place, destination: Place, date: Date): Seq[Itinerary] { // relax input type
@@ -82,6 +82,21 @@ trait Lufthansa extends Airline {
   }
 
 
-  def book(itinerary: Itinerary, travelers: Seq[Traveler], creditCard: CreditCard)
-    // TODO: need more information about Credit Card processing services. Think about it later. 
+  def book(itinerary: Itinerary, travelers: Seq[Traveler]): (Ticket, EuroPay) = {
+    // pre-condition
+    assert( itinerary is still available )    // don't worry about this if your implementation of airline does not check availablity
+    assert( travelers.length > 0 )            // require at least one traveler
+
+    // internal processing to generate a ticket
+    val ticket  = ...
+
+    // Lufthansa always use EuroPay to collect payments
+    val euroPay = ...
+
+    // post-condition
+    assert( ticket.itinerary == itinerary )
+    assert( ticket.travelers == travelers )
+
+    (ticket, euroPay)
+  }
 }

@@ -1,16 +1,41 @@
+/**
+ * Copyright 2010 Johannes Wachter, Marcus Körner, Johannes Potschies, Jeffrey Groneberg, Sergej Jakimcuk
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *     http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package travelservice.webservice.resources
 
+// Import Lift modules.
 import _root_.net.liftweb.common._
 import _root_.net.liftweb.http._
+
+// Import Scala classes.
 import _root_.scala.xml._
+
+// Import Joda Time.
 import _root_.org.joda.time._
 import _root_.org.joda.time.format._
+
+// Import JDK classes.
 import _root_.java.util.Date
 
+// Import application classes.
 import travelservice.webservice.rest._
-
 import model._
 
+//
+// This object provides the implementation of a restful resource to handle search service requests.
+//
 object SearchResource /*extends RESTResource*/{
 	
 	val df  = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm")
@@ -61,20 +86,18 @@ object SearchResource /*extends RESTResource*/{
  		Full(XmlResponse(<itineraries>{res.map(e => e.toXML)}</itineraries>))
  	}
   
-  	  private def airportOrCity(id1:String, id2:String):(world.Place, world.Place) = {
-  	    println(id1, id2)
+  	  private def airportOrCity(id1:String, id2:String):(specification.Place, specification.Place) = {
 	    val oap = Airport.findByCode( id1 )
 	    val dap = Airport.findByCode( id2 )
      
-	    println(oap, dap)
 	
 	    var its = Nil;
 	    
 	    (oap, dap) match {
 	    	case (Full(orig), Full(dest)) => (orig.toAirport, dest.toAirport) 
-	      case (Empty, Full(dest)) => (City.find(id1).open_!.toCity, dest.toAirport) 
-	      case (Full(orig), Empty) => (orig.toAirport, City.find(id2).open_!.toCity)
-	      case (_, _) => ( City.find(id1).open_!.toCity, City.find(id2).open_!.toCity)
+	      case (Empty, Full(dest)) => (City.findByName(id1).open_!.toCity, dest.toAirport) 
+	      case (Full(orig), Empty) => (orig.toAirport, City.findByName(id2).open_!.toCity)
+	      case (_, _) => ( City.findByName(id1).open_!.toCity, City.findByName(id2).open_!.toCity)
 	    }		  
 	  }
 }

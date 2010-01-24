@@ -1,4 +1,4 @@
-import airline._
+import specification._
 
 trait AirCanada extends Airline {
   def searchOneway(origin: Place, destination: Place, date: Date): Seq[Itinerary] { // relax input type
