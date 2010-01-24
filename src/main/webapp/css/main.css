@@ -1,60 +1,72 @@
 body {
-	background-color:#485558;
+    background-color:#485558;
 }
-
 div#logo {
-	margin:0 auto;
-	width: 600px
+    margin:0 auto;
+    width:600px;
 }
-
 div#messages {
-	margin:0 auto;
-	width: 600px;
+    margin:0 auto;
+    width:600px;
 }
-
 div#content {
-	margin:0 auto;
-	width: 400px;
+    margin:0 auto;
+    width:400px;
 }
-
 label.label {
-	float:left;
-	width:130px;
-	text-align:right;
-	text-transform:uppercase;
+    float:left;
+    padding-right:10px;
+    text-align:right;
+    width:130px;
 }
-
 input.field {
-	width:200px;
+    width:200px;
+    opacity: 1.0;
 }
-
 div.formItemContainer {
-	clear:left;
+    clear:left;
+    opacity: 1.0;
+    padding:2px;
 }
-
 div.formButtonContainer {
-	text-align:center;
+    text-align:center;
+    margin-left: 100px;
+    opacity: 1.0;
+}
+p.success {
+    font-size:larger;
+    text-align:center;
+    width:100%;
+}
+#currentSegmentsTable {
+
+    width: 100%;
+    opacity: 1.0;
+    padding: 1px 1px;
+    margin-top: 5px;
+    background-color:#eee;
+    border: 2px dotted #fff;
 }
 
-p.success {
-	width: 100%;
-	text-align:center;
-	font-size:larger;
-}
 
 div#searchcontainer {
-	background-image: url('/media/background.png');
-	width: 820px;
-	height: 520px;
-	margin: 50px auto;
-	padding: 40px;
+    background-image:url(/media/background.png);
+    border:1px solid white;
+    height:520px;
+    margin:50px auto;
+    padding:10px;
+    width:820px;
+    opacity: 1.0;
 }
 
 div#accordionContainer {
-	margin:80px auto;
-	width:350px;
-	padding:6px;
-	background-color:white;
+    background-color:white;
+    height:500px;
+    margin:0 410px;
+    opacity:0.8;
+    padding:10px;
+    width:390px;
+    border: 0px;
 }
 
 h2.searchFormHeader {
