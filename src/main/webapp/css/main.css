@@ -58,6 +58,7 @@ div#searchcontainer {
     width:820px;
     opacity: 1.0;
 }
+
 div#accordionContainer {
     background-color:white;
     height:500px;
@@ -67,6 +68,32 @@ div#accordionContainer {
     width:390px;
     border: 0px;
 }
+
 h2.searchFormHeader {
-    background-color:#DDDDDD;
+	background-color:#DDD;
 }
+
+div.travelercontainer {
+	width:450px;
+	background-color:white;
+}
+
+div#searchresult {
+	margin: 0 auto;
+	width: 650px;
+	background-color:white;
+}
+
+div#lift__noticesContainer__ {
+	position:absolute;
+	top:0;
+	left:0;
+	width:100%;
+}
+
+div#lift__noticesContainer___error {
+	color:white;
+	font-weight:bold;
+	background-color:red;
+}
+

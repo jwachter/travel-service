@@ -1,16 +1,56 @@
 <lift:surround with="default" at="content">
-	<lift:Book.travelers />
+	<div class="travelercontainer" style="margin:0 auto">
+	<h2>Travelers</h2>
+	<table width="100%">
+		<lift:Book.travelers />
+	</table>
+	<div style="text-align:center;padding:20px">
+	<a href="/book/checkout.html"><strong>Proceed to Checkout</strong></a>
+	</div>
+	<h2>Add Traveler</h2>
 	<form method="post">
-		<label for="firstName">First Name</label><input type="text" value="" id="firstName" name="firstName"/>
-		<label for="middleName">Middle Name</label><input type="text" value="" id="middleName" name="middleName"/>
-		<label for="lastName">Last Name</label><input type="text" value="" id="lastName" name="lastName"/>
-		<label for="gender">Gender</label><select id="gender" name="gender"><option value="male" selected="selected">Male</option><option value="female">Female</option></select>
-		<label for="birthday">Birthday</label><input type="text" value="" id="birthday" name="birthday"/>
-		<label for="travelDocType">Travel Doc Type</label><input type="text" value="" id="travelDocType" name="travelDocType"/>
-		<label for="travelDocNumber">Travel Doc Number</label><input type="text" value="" id="travelDocNumber" name="travelDocNumber"/>
-		<label for="phone">Phone</label><input type="text" value="" id="phone" name="phone"/>
-		<label for="email">E-Mail</label><input type="text" value="" id="email" name="email"/>
-		<input type="submit" value="submit" />
+		<div class="formItemContainer">
+			<label class="label" for="firstName">First Name</label>
+			<input class="field" type="text" value="" id="firstName" name="firstName"/>
+		</div>
+		<div class="formItemContainer">
+			<label class="label" for="middleName">Middle Name</label>
+			<input class="field" type="text" value="" id="middleName" name="middleName"/>
+		</div>
+		<div class="formItemContainer">
+			<label class="label" for="lastName">Last Name</label>
+			<input class="field" type="text" value="" id="lastName" name="lastName"/>
+		</div>
+		<div class="formItemContainer">
+			<label class="label" for="gender">Gender</label>
+			<select id="gender" name="gender">
+				<option value="male" selected="selected">Male</option>
+				<option value="female">Female</option>
+			</select>
+		</div>
+		<div class="formItemContainer">
+			<label class="label" for="birthday">Birthday</label>
+			<input class="field" type="text" value="" id="birthday" name="birthday"/>
+		</div>
+		<div class="formItemContainer">
+			<label class="label" for="travelDocType">Travel Doc Type</label>
+			<input class="field" type="text" value="" id="travelDocType" name="travelDocType"/>
+		</div>
+		<div class="formItemContainer">
+			<label class="label" for="travelDocNumber">Travel Doc Number</label>
+			<input class="field" type="text" value="" id="travelDocNumber" name="travelDocNumber"/>
+		</div>
+		<div class="formItemContainer">
+			<label class="label" for="phone">Phone</label>
+			<input class="field" type="text" value="" id="phone" name="phone"/>
+		</div>
+		<div class="formItemContainer">
+			<label class="label" for="email">E-Mail</label>
+			<input class="field" type="text" value="" id="email" name="email"/>
+		</div>
+		<div class="formButtonContainer">
+			<input type="submit" value="Add Traveler" />
+		</div>
 	</form>
-	<a href="/book/checkout.html">Proceed to Checkout</a>
+	</div>
 </lift:surround>

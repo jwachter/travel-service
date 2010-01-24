@@ -134,7 +134,7 @@ class Book {
 		  }
 		  val travelDocType = S.param("travelDocType") match {
 		  case Full(n) if !n.isEmpty => n
-		  case _ => "male" 
+		  case _ => "none" 
 		  }	  
 		  val travelDocNumber = S.param("travelDocNumber") match {
 		  case Full(n) if !n.isEmpty => n
@@ -158,7 +158,7 @@ class Book {
 	  }
 	  
 	  // Return a simple list of the current participants.
-	  <ul>{TravelerHolder.is.map(t => t.toXHTMLListItem)}</ul>
+	  <tr>{TravelerHolder.is.map(t => t.toXHTMLListItem)}</tr>
 	}
 	
 	//
@@ -169,10 +169,17 @@ class Book {
 	 	if(TravelerHolder.is.size > 0 && !BookableItinerary.is.isEmpty){
 	 	  // create the Ticket
 	 	  val ticket = createTicket()
+     
 	 	  
 	 	  // Link to the payment service.
 	 	  val link = "http://localhost:9090/pay.html?payee=lufthansa&item="+BookableItinerary.is.open_!.id
      
+	 			  // Clear cache
+	 			  IDHolder.set(Empty)
+	 			  ItineraryHolder.set(Empty)
+	 			  TravelerHolder.set(Nil)
+	 			  TicketHolder.set(null)
+	 			  BookableItinerary.set(Empty)
 	      // Return link.
 	 	  <a href={link}>Pay with EuroPay</a>
 	 	} else {

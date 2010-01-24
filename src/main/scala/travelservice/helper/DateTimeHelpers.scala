@@ -32,7 +32,7 @@ object DateTimeHelpers {
   // Different formatters for DateTimes.
   //
   private val DEFAULT_FORMAT = DateTimeFormat.forPattern("yyyy/MM/dd")
-  private val ISO_FORMAT = ISODateTimeFormat.dateTime()
+  private val ISO_FORMAT = DateTimeFormat.forPattern("yyyy-MM-dd HH:mm")
   private val PRETTY_FORMAT = DateTimeFormat.forPattern("yyyy-MM-dd '-' HH:mm") 
   
   //

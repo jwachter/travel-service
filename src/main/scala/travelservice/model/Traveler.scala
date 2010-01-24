@@ -84,9 +84,13 @@ class Traveler extends LongKeyedMapper[Traveler] with IdPK{
   // Transform to a simple HTML List Item.
   //
   def toXHTMLListItem = {
-    <li>
-    	{firstName.is + middleName.is + lastName.is}
-    </li>
+    	<tr>
+		    <td>{ firstName.is }</td>
+		    <td>{ lastName.is }</td>
+		    <td>{ gender.is } </td>
+		    <td>{ travelDocType.is }</td>
+		    <td>{ travelDocNumber.is }</td>
+	    </tr>
   }
   def toXML = 
     <traveler>
