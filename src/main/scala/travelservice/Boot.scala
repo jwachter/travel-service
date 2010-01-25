@@ -53,6 +53,7 @@ class Boot extends Bootable{
     // Prepend the Service classes.
     LiftRules.dispatch.prepend(SearchResource.dispatch)
     LiftRules.dispatch.prepend(TicketResource.dispatch)
+    LiftRules.dispatch.prepend(BookResource.dispatch)
 
     // Create or update the Schema information for the model classes
     // Remove comments for 1 run to initialize the database

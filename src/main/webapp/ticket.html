@@ -1,20 +1,22 @@
 <lift:surround with="default" at="content">
+	<div style="background-color:white">
 	<lift:TicketDisplay.show>
-		<div>
-			<ticket:main />
+		<div style="background-color:#ddd">
+			Ticket-ID: <ticket:main />
 		</div>
-		<div id="travelers">
-			<table>
+		<div id="travelers" style="background-color:white">
+			<table cellpadding="4" cellspacing="0">
 				<ticket:travelers />
 			</table>
 		</div>
-		<div>
-			<table>
+		<div style="background-color:#ddd">
+			<table cellpadding="4" cellspacing="0">
 				<ticket:flights />
 			</table>
 		</div>
-		<div>
-			<strong><ticket:price /></strong> - <strong><ticket:paymentStatus /></strong>
+		<div style="background-color:white">
+			<strong>Price: <ticket:price />$</strong> - <strong>Payment arrived: <ticket:paymentStatus /></strong>
 		</div>
 	</lift:TicketDisplay.show>
+	</div>
 </lift:surround>

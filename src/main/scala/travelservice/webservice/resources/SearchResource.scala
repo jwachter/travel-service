@@ -33,6 +33,7 @@ import _root_.java.util.Date
 import travelservice.webservice.rest._
 import travelservice.model._
 import travelservice.helper._
+import travelservice.session._
 
 //
 // This object provides the implementation of a restful resource to handle search service requests.
@@ -80,6 +81,8 @@ object SearchResource extends RESTResource{
  		
  		val res = new lufthansa.Lufthansa().searchOneway(found._1, found._2, departureDate)
    
+ 		ItineraryHolder.set(Full(res))
+   
  		Full(XmlResponse(<itineraries>{res.map(e => e.toXML)}</itineraries>))
  	}
   
@@ -92,6 +95,7 @@ object SearchResource extends RESTResource{
  		val found = AirportCityHelper.getPlaces(origin, destination).open_!
    
  		val res = new lufthansa.Lufthansa().searchRoundtrip(found._1, found._2, departureDate, returnDate)
+ 		ItineraryHolder.set(Full(res))
    
  		Full(XmlResponse(<itineraries>{res.map(e => e.toXML)}</itineraries>))
  	}
@@ -109,6 +113,7 @@ object SearchResource extends RESTResource{
  	    searchSegments = (places._1, places._2, date) :: searchSegments
  	  }
  		val res = new lufthansa.Lufthansa().searchMultisegment(searchSegments.reverse)
+ 		ItineraryHolder.set(Full(res))
    
  		Full(XmlResponse(<itineraries>{res.map(e => e.toXML)}</itineraries>))
  	}     

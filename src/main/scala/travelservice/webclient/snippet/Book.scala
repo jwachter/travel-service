@@ -86,6 +86,10 @@ class Book {
 	    // Get the Itinerary from Cache
 	    val container = ItineraryHolder.is
      
+     	  TravelerHolder.set(Nil)
+	 	  TicketHolder.set(null)
+	 	  BookableItinerary.set(Empty)
+     
 	    // Check if referenced object with id exists. Otherwise back to start. If it exists, continue with next step.
 	    container match {
 	      case Full(its) => {
@@ -175,7 +179,7 @@ class Book {
 	 	  val link = "http://localhost:9090/pay.html?payee=lufthansa&item="+BookableItinerary.is.open_!.id
      
 	      // Return link.
-	      val result = <p>You need to pay {BookableItinerary.is.open_!.price.toString}. Do it with EuroPay</p><br /><a href={link}>Pay with EuroPay</a>
+	      val result = <p>You need to pay {ticket.price.toString}. Do it with EuroPay</p><br /><a href={link}>Pay with EuroPay</a>
 
        // Clear cache
 	 	  IDHolder.set(Empty)

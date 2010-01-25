@@ -1,14 +1,14 @@
 <search type="oneway">
-    <origin>PEK</origin>
-    <destination>FRA</destination>
+    <origin>FRA</origin>
+    <destination>TXL</destination>
     <departureDate>2010-03-03 12:00</departureDate>
 </search>
 
 
 
 <search type="roundtrip">
-    <origin>PEK</origin>
-    <destination>FRA</destination>
+    <origin>FRA</origin>
+    <destination>TXL</destination>
     <departureDate>2010-03-03 12:00</departureDate>
     <returnDate>2010-04-15 19:00</returnDate>
 </search>
@@ -18,22 +18,38 @@
 <search type="multisegment">
     <segments>
         <segment>
-            <origin>PEK</origin>
-            <destination>FRA</destination>
+            <origin>FRA</origin>
+            <destination>TXL</destination>
             <departureDate>2010-03-03 12:00</departureDate>
         </segment>
 
         <segment>
-            <origin>FRA</origin>
-            <destination>YYT</destination>
+            <origin>TXL</origin>
+            <destination>ZRH</destination>
             <departureDate>2010-08-18 15:00</departureDate>
         </segment>
 
         <segment>
-            <origin>YYT</origin>
-            <destination>PEK</destination>
+            <origin>ZRH</origin>
+            <destination>CDG</destination>
             <departureDate>2010-10-20 15:00</departureDate>
         </segment>
     </segments>
 </search>
 
+<book>
+	<travelers>
+		<traveler>
+			<firstname>Johannes</firstname>
+			<lastname>Wachter</lastname>
+		</traveler>
+		<traveler>
+			<firstname>Johannes</firstname>
+			<lastname>Potschies</lastname>
+		</traveler>
+		<traveler>
+			<firstname>Marcus</firstname>
+			<lastname>Koerner</lastname>
+		</traveler>
+	</travelers>
+</book>

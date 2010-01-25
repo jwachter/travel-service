@@ -81,10 +81,21 @@ class Ticket extends LongKeyedMapper[Ticket] with IdPK{
     	// retreive the real Flight objects for each TicketFlight
     	val groupedFlights : List[List[Flight]] = sorted.map(l => l.map(tf => tf.flight.open_!))
      
-    	<ticket id={id.is.toString}>
+    	val durationPre : List[Flight]= groupedFlights.flatten
+     
+    	val duration = durationPre.map(e => e.duration.is).foldLeft(0)(_+_)
+     
+    	<ticket id={uid.is}>
+    		<itinerary id ={uid.is}> 
+            <origin>{ groupedFlights.head.head.origin.code.is }</origin>
+            <destination>{ groupedFlights.last.last.destination.code.is }</destination>
+            <departureDate>{ groupedFlights.head.head.departure.is.toString }</departureDate>
+            <price>{ price }</price>
+            <duration>{ duration }</duration>
 	    	<segments>
 	    	{groupedFlights.map(e => <segment>{e.map(f => f.toXML)}</segment>)}
 	    	</segments>
+	    	</itinerary>
 	    	<travelers>
 	    		{travelers.get.map(t => t.toXML)}
 	    	</travelers>
