@@ -74,8 +74,10 @@ object BookResource extends RESTResource{
 	// Create the Ticket instance.
 	//
 	private def createTicket(it:specification.Itinerary, t:List[Traveler]):Ticket={
+	  
+	  val uid = IdHelper.md5(it.id + (t.map(t=>t.firstName.is+t.lastName.is).mkString("")) + new DateTime().toDate.toString)
 	  // Create Ticket.
-	  val ticket = Ticket.create.uid(it.id).price(it.price * t.size)
+	  val ticket = Ticket.create.uid(uid).itid(it.id).price(it.price * t.size)
 	  val success = ticket.save
    
 	  // Associate Travelers with Ticket.

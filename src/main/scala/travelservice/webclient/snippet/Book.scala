@@ -176,7 +176,7 @@ class Book {
      
 	 	  
 	 	  // Link to the payment service.
-	 	  val link = "http://localhost:9090/pay.html?payee=lufthansa&item="+BookableItinerary.is.open_!.id
+	 	  val link = "http://localhost:9090/pay.html?payee=lufthansa&item="+ticket.uid.is
      
 	      // Return link.
 	      val result = <p>You need to pay {ticket.price.toString}. Do it with EuroPay</p><br /><a href={link}>Pay with EuroPay</a>
@@ -205,8 +205,10 @@ class Book {
 	  // Fetch cached travellers.
 	  val travelers = TravelerHolder.is
    
+	  val uid = IdHelper.md5(it.id + (travelers.map(t=>t.firstName.is+t.lastName.is).mkString("")) + new DateTime().toDate.toString)
+   
 	  // Create Ticket.
-	  val ticket = Ticket.create.uid(it.id).price(it.price * travelers.size)
+	  val ticket = Ticket.create.uid(uid).itid(it.id).price(it.price * travelers.size)
 	  val success = ticket.save
    
 	  // Associate Travelers with Ticket.

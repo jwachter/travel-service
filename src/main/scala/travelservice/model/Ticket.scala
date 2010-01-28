@@ -25,6 +25,7 @@ import travelservice.helper.DateTimeHelpers._
 // Companion object for mapping purposes.
 //
 object Ticket extends Ticket with LongKeyedMetaMapper[Ticket]{
+	override def dbIndexes = UniqueIndex(IndexField(Ticket.uid)) :: Nil
 	override def dbTableName = "tickets"
 }
 
@@ -39,9 +40,16 @@ class Ticket extends LongKeyedMapper[Ticket] with IdPK{
 	def getSingleton = Ticket
  
     //
-    // Holds a unique identifier for this Ticket based upon the itinerary and the Travelers.
+    // Holds a unique identifier for this Ticket based upon the itinerary and the Travelers + the current time.
     //
-	object uid extends MappedString(this, 255)
+	object uid extends MappedString(this, 255){
+	  override def dbIndexed_? = false
+	}
+	
+	//
+	// Holds a unique identifier for the itinerary this ticket is locked to.
+	//
+	object itid extends MappedString(this, 255)
  
 	//
     // Holds the price of this Ticket.
@@ -86,7 +94,7 @@ class Ticket extends LongKeyedMapper[Ticket] with IdPK{
     	val duration = durationPre.map(e => e.duration.is).foldLeft(0)(_+_)
      
     	<ticket id={uid.is}>
-    		<itinerary id ={uid.is}> 
+    		<itinerary id ={itid.is}> 
             <origin>{ groupedFlights.head.head.origin.code.is }</origin>
             <destination>{ groupedFlights.last.last.destination.code.is }</destination>
             <departureDate>{ groupedFlights.head.head.departure.is.toString }</departureDate>

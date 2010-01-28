@@ -72,7 +72,7 @@ $(document).ready(function(){
 		var orig = $("#originSequence").val();
 		var dest = $("#destinationSequence").val();
 		var dept = $("#departureSequence").val();
-		window.location.href = window.location.href + 'search.html?type=multisegment&originSequence='+orig+'&destinationSequence='+dest+'&departureSequence='+dept;
+		window.location.href = 'http://localhost:8080/search.html?type=multisegment&originSequence='+orig+'&destinationSequence='+dest+'&departureSequence='+dept;
 		return false;
 	});
 });
